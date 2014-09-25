@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Elao\\Tom32i\\SimpleSecurityBundle\\": "."
+            "Tom32i\\Bundle\\SimpleSecurityBundle\\": "."
         }
     },
     "extra": {
