@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Form\Type;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,7 +36,7 @@ class RegisterType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class'         => 'Tom32i\SimpleSecurityBundle\Entity\User',
+                'data_class'         => 'Tom32i\Bundle\SimpleSecurityBundle\Entity\User',
                 'validation_groups'  => ['Default', 'Registration'],
                 'cascade_validation' => true,
             ]

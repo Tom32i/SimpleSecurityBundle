@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Controller;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
@@ -9,10 +9,10 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Form\FormError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Tom32i\SimpleSecurityBundle\Service\UserManager;
-use Tom32i\SimpleSecurityBundle\Form\Type\LoginType;
-use Tom32i\SimpleSecurityBundle\Form\Type\RegisterType;
-use Tom32i\SimpleSecurityBundle\Entity\User;
+use Tom32i\Bundle\SimpleSecurityBundle\Service\UserManager;
+use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\LoginType;
+use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType;
+use Tom32i\Bundle\SimpleSecurityBundle\Entity\User;
 
 /**
  * Security Controller

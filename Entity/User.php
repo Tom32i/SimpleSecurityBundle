@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Entity;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
 
 use Serializable;
 use Doctrine\ORM\Mapping as ORM;
@@ -8,14 +8,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Tom32i\SimpleSecurityBundle\Behaviour\SafePasswordInterface;
-use Tom32i\SimpleSecurityBundle\Behaviour\ConfirmableInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\SafePasswordInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\ConfirmableInterface;
 
 /**
  * User
  *
  * @ORM\Table(name="account")
- * @ORM\Entity(repositoryClass="Tom32i\SimpleSecurityBundle\Entity\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="Tom32i\Bundle\SimpleSecurityBundle\Entity\Repository\UserRepository")
  * @UniqueEntity(fields="email", message="user.email.used")
  * @UniqueEntity(fields="name", message="user.name.used")
  */

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\DependencyInjection;
+namespace Tom32i\Bundle\SimpleSecurityBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;

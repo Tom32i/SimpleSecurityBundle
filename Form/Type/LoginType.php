@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Form\Type;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

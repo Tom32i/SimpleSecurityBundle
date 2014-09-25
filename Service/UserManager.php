@@ -1,11 +1,11 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Service;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Tom32i\SimpleSecurityBundle\Entity\User;
+use Tom32i\Bundle\SimpleSecurityBundle\Entity\User;
 
 /**
  * User manager

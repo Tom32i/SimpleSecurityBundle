@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Behaviour;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Behaviour;
 
 /**
  * Safe password interface

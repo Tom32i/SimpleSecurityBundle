@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Entity\Repository;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 

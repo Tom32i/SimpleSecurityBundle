@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle;
+namespace Tom32i\Bundle\SimpleSecurityBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

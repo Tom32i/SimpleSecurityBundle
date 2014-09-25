@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\SimpleSecurityBundle\Service;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Swift_Mailer;
 use Swift_Message;
@@ -8,7 +8,7 @@ use Swift_SwiftException;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Tom32i\SimpleSecurityBundle\Interfaces\ConfirmableInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Interfaces\ConfirmableInterface;
 
 /**
  * Mail Manager Class
