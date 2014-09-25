@@ -1,0 +1,8 @@
+user:
+    name:
+        invalid:    Votre nom doit faire entre 3 et 50 caractères.
+    email:
+        invalid:    Votre adresse email doit être une adresse email valide.
+    password:
+        invalid:    Votre mot de passe doit fait au moins 5 caractères.
+        mismatch:   Les deux mots de passes ne correspondent pas.

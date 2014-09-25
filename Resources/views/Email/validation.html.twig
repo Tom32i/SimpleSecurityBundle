@@ -1,0 +1,5 @@
+{% extends "@Tom32iSimpleSecurity/Email/layout.html.twig" %}
+
+{% block content %}
+    {{ 'email.confirmation.content'|trans({'%url%': url('email_validation', {token: token})})|raw }}
+{% endblock %}

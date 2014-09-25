@@ -1,0 +1,463 @@
+<?php
+
+namespace Tom32i\SimpleSecurityBundle\Entity;
+
+use Serializable;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Tom32i\SimpleSecurityBundle\Behaviour\SafePasswordInterface;
+use Tom32i\SimpleSecurityBundle\Behaviour\ConfirmableInterface;
+
+/**
+ * User
+ *
+ * @ORM\Table(name="account")
+ * @ORM\Entity(repositoryClass="Tom32i\SimpleSecurityBundle\Entity\Repository\UserRepository")
+ * @UniqueEntity(fields="email", message="user.email.used")
+ * @UniqueEntity(fields="name", message="user.name.used")
+ */
+class User implements AdvancedUserInterface, SafePasswordInterface, ConfirmableInterface, Serializable
+{
+    const ROLE_USER  = 'ROLE_USER';
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+
+    /**
+     * @var integer
+     *
+     * @ORM\Id
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=60, unique=true)
+     * @Assert\Email(message="user.email.invalid")
+     * @Assert\NotBlank(message="user.email.invalid")
+     */
+    protected $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=50, unique=true)
+     * @Assert\Length(min=3, max=50, minMessage="user.name.invalid", maxMessage="user.name.invalid")
+     * @Assert\NotBlank(message="user.name.invalid")
+     */
+    protected $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=255, nullable=true)
+     */
+    protected $password;
+
+    /**
+     * @var string
+     *
+     * @Assert\Length(
+     *     min=5,
+     *     max=50,
+     *     minMessage="user.password.invalid",
+     *     maxMessage="user.password.invalid",
+     *     groups={"Registration", "ChangePassword"}
+     * )
+     * @Assert\NotBlank(message="user.password.invalid", groups={"Registration", "ChangePassword"})
+     */
+    protected $plainPassword;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="salt", type="string", length=32)
+     */
+    protected $salt;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="roles", type="simple_array")
+     */
+    protected $roles;
+
+    /**
+     * Random string sent to the user email address in order to verify it
+     *
+     * @var string
+     *
+     * @ORM\Column(name="confirmation_token", type="string", length=32, nullable=true)
+     * @Assert\Null()
+     * @Assert\NotBlank(groups={"Confirmation"})
+     */
+    protected $confirmationToken;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="enabled", type="boolean")
+     * @Assert\False(groups={"Confirmation"})
+     */
+    protected $enabled;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->enabled = false;
+        $this->roles   = [self::ROLE_USER];
+        $this->salt    = self::generateToken();
+    }
+
+    /**
+     * To String
+     *
+     * @return string The string version of the User
+     */
+    public function __toString()
+    {
+        return $this->getName();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function serialize()
+    {
+        return serialize([$this->id, $this->name, $this->email]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unserialize($serialized)
+    {
+        list($this->id, $this->name, $this->email) = unserialize($serialized);
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return User
+     */
+    public function setEmail($email)
+    {
+        $this->email = strtolower($email);
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     *
+     * @return User
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set plainPassword
+     *
+     * @param string $plainPassword
+     *
+     * @return User
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
+    /**
+     * Get plainPassword
+     *
+     * @return string
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     *
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * Set roles
+     *
+     * @param array $roles
+     *
+     * @return User
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * Add role
+     *
+     * @param string $role
+     *
+     * @return User
+     */
+    public function addRole($role)
+    {
+        if (!$this->hasRole($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove role
+     *
+     * @param string $role
+     *
+     * @return User
+     */
+    public function removeRole($role)
+    {
+        $key = array_search($role, $roles);
+
+        if ($key !== false) {
+            unset($this->roles[$key]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get roles
+     *
+     * @return array
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return User
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled
+     *
+     * @return StatedEntity
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = (bool) $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get enabled
+     *
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Does the user have this role?
+     *
+     * @param string $role The role to test
+     *
+     * @return boolean
+     */
+    public function hasRole($role)
+    {
+        return in_array($role, $this->roles);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUsername()
+    {
+        return $this->getName();
+    }
+
+    /**
+     * Generate Token
+     *
+     * @return string
+     */
+    public static function generateToken()
+    {
+        return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+    }
+
+    /**
+     * Set confirmationToken
+     *
+     * @param string $confirmationToken
+     *
+     * @return User
+     */
+    public function setConfirmationToken($confirmationToken = null)
+    {
+        $this->confirmationToken = empty($confirmationToken) ? self::generateToken() : $confirmationToken;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmationToken
+     *
+     * @return string
+     */
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function equals(AdvancedUserInterface $user)
+    {
+        return ($user->getId() === $this->getId()) || ($user->getEmail() === $this->getEmail()) || ($user->getName() === $this->getName());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function eraseCredentials()
+    {
+        $this->plainPassword = null;
+
+        return $this;
+    }
+
+    /**
+     * Erase confirmation token
+     *
+     * @return User
+     */
+    public function eraseConfirmationToken()
+    {
+        $this->confirmationToken = null;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+}

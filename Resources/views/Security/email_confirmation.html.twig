@@ -1,0 +1,18 @@
+{% extends 'LfepCoreBundle::layout.html.twig' %}
+
+{% block header '' %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>
+            {{ 'email_confirmation.title'|trans|raw }}
+        </h1>
+        <p>
+            {{ 'email_confirmation.content'|trans|raw }}
+        </p>
+
+        <a href="{{ path('login') }}" class="btn btn-primary btn-block">
+            {{ 'email_confirmation.link.login'|trans }}
+        </a>
+    </div>
+{% endblock %}
