@@ -26,7 +26,7 @@ class Tom32iSimpleSecurityExtension extends Extension
         $loader->load('services.xml');
 
         $container
-            ->getDefinition('elao.form_translation.key_builder')
+            ->getDefinition('tom32i.simple_security.controller.security')
             ->replaceArgument(2, $config['login_success_redirect']);
     }
 }

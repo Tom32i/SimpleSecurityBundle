@@ -24,7 +24,11 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('login_success_redirect')
                     ->isRequired()
-                    ->info('<info>route to redirect to on successful login</info>')
+                    ->info('<info>Route to redirect to on successful login</info>')
+                ->end()
+                ->scalarNode('mailer_from')
+                    ->isRequired()
+                    ->info('<info>"from" field for sent emails</info>')
                 ->end()
             ->end();
 
