@@ -1,27 +1,25 @@
-{% extends 'LfepCoreBundle::layout.html.twig' %}
+{% extends '::base.html.twig' %}
 
-{% block header '' %}
+{% block body %}
+    {{ form_start(form) }}
+        <fieldset>
+            <legend>
+                {{ 'form.login.legend'|trans }}
+            </legend>
 
-{% block content %}
-    <div class="col-md-4 centered">
-        {{ form_start(form, {form_class: "well"}) }}
-            <fieldset>
-                <legend>
-                    {{ 'form.login.legend'|trans }}
-                </legend>
+            {{ form_errors(form) }}
 
-                {{ form_errors(form) }}
+            {{ form_row(form.username) }}
+            {{ form_row(form.password) }}
+            {{ form_row(form.remember_me) }}
 
-                {{ form_row(form.username) }}
-                {{ form_row(form.password) }}
-                {{ form_row(form.remember_me) }}
+            {{ form_row(form.submit) }}
+        </fieldset>
+    {{ form_end(form) }}
 
-                {{ form_row(form.submit, {btn_class: 'btn btn-success btn-block'}) }}
-            </fieldset>
-        {{ form_end(form) }}
-        <hr />
-        <a href="{{ path('register') }}" class="btn btn-primary btn-block">
-            {{ 'form.login.link.register'|trans }}
-        </a>
-    </div>
+    <hr />
+
+    <a href="{{ path('register') }}">
+        {{ 'form.login.link.register'|trans }}
+    </a>
 {% endblock %}

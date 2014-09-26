@@ -45,19 +45,17 @@ email_confirmation:
 
 email:
     hello:  "Bonjour %name%,"
-    sign:   |
-            Mé wé,<br/><br/>
-            Cordialement.
+    sign:   Cordialement.
 
     confirmation:
-        title:          LFEP | Confirmation votre adresse email
+        title:          Confirmation votre adresse email
         content:        |
                         <p>Bravo vous vous êtes inscrit sur LFEP !</p>
                         <p>Veuillez cliquer sur le lien ci-dessous afin de valider cette inscription :</p>
                         <a href="%url%">%url%</a>
 
     reset_password:
-        title:          LFEP | Mot de passe perdu
+        title:          Mot de passe perdu
         content:        |
                         <p>Vous avez perdu votre mot de passe ?</p>
                         <p>Veuillez cliquer sur le lien ci-dessous pour choisir votre nouveau mot de passe :</p>
