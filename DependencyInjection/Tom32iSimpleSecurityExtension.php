@@ -27,6 +27,6 @@ class LfepSecurityExtension extends Extension
 
         $container
             ->getDefinition('elao.form_translation.key_builder')
-            ->replaceArgument(2, $config['login_success_redirect'])
+            ->replaceArgument(2, $config['login_success_redirect']);
     }
 }
