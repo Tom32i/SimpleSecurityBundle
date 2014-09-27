@@ -30,6 +30,15 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->info('<info>"from" field for sent emails</info>')
                 ->end()
+                ->scalarNode('user_class')
+                    ->isRequired()
+                    ->defaultValue('Tom32i\Bundle\SimpleSecurityBundle\Entity\User')
+                    ->info('<info>User class (must extend Tom32i\Bundle\SimpleSecurityBundle\Entity\User)</info>')
+                ->end()
+                ->scalarNode('login_firewall')
+                    ->isRequired()
+                    ->info('<info>Firewall to log the user into</info>')
+                ->end()
             ->end();
 
         return $treeBuilder;

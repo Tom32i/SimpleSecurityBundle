@@ -7,39 +7,14 @@
     <parameters>
         <parameter key="tom32i.simple_security.controller.security.class">Tom32i\Bundle\SimpleSecurityBundle\Controller\SecurityController</parameter>
         <parameter key="tom32i.simple_security.listener.doctrine.class">Tom32i\Bundle\SimpleSecurityBundle\Listener\DoctrineListener</parameter>
-        <parameter key="tom32i.simple_security.manager.user.class">Tom32i\Bundle\SimpleSecurityBundle\Service\UserManager</parameter>
-        <parameter key="tom32i.simple_security.manager.mail.class">Tom32i\Bundle\SimpleSecurityBundle\Service\MailManager</parameter>
     </parameters>
 
     <services>
-        <!-- Controllers -->
-        <service id="tom32i.simple_security.controller.security" class="%tom32i.simple_security.controller.security.class%">
-            <argument type="service" id="security.context" />
-            <argument type="service" id="tom32i.simple_security.manager.user" />
-            <argument></argument>
-        </service>
-
         <!-- Listeners -->
         <service id="tom32i.simple_security.listener.doctrine" class="%tom32i.simple_security.listener.doctrine.class%">
             <argument type="service" id="security.encoder_factory" />
             <tag name="doctrine.event_listener" event="prePersist" />
             <tag name="doctrine.event_listener" event="preUpdate" />
-        </service>
-
-        <!-- Managers -->
-        <service id="tom32i.simple_security.manager.user" class="%tom32i.simple_security.manager.user.class%">
-            <argument type="service" id="doctrine.orm.entity_manager" />
-            <argument type="service" id="validator" />
-            <argument type="service" id="tom32i.simple_security.manager.mail" />
-            <argument>main</argument>
-        </service>
-
-        <service id="tom32i.simple_security.manager.mail" class="%tom32i.simple_security.manager.mail.class%">
-            <argument type="service" id="mailer" />
-            <argument type="service" id="translator" />
-            <argument type="service" id="templating" />
-            <argument type="service" id="router" />
-            <argument>%mailer_from%</argument>
         </service>
     </services>
 </container>

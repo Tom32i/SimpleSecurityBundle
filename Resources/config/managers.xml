@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="tom32i.simple_security.manager.user.class">Tom32i\Bundle\SimpleSecurityBundle\Service\UserManager</parameter>
+        <parameter key="tom32i.simple_security.manager.mail.class">Tom32i\Bundle\SimpleSecurityBundle\Service\MailManager</parameter>
+    </parameters>
+
+    <services>
+        <!-- Managers -->
+        <service id="tom32i.simple_security.manager.user" class="%tom32i.simple_security.manager.user.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="validator" />
+            <argument type="service" id="tom32i.simple_security.manager.mail" />
+            <argument>%tom32i_simple_security.user_class%</argument>
+            <argument>%tom32i_simple_security.login_firewall%</argument>
+        </service>
+
+        <service id="tom32i.simple_security.manager.mail" class="%tom32i.simple_security.manager.mail.class%">
+            <argument type="service" id="mailer" />
+            <argument type="service" id="translator" />
+            <argument type="service" id="templating" />
+            <argument type="service" id="router" />
+            <argument></argument>
+        </service>
+    </services>
+</container>

@@ -1,29 +1,22 @@
 <?php
 
-namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Model;
 
-use Serializable;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\SafePasswordInterface;
-use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\ConfirmableInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
  * User
  *
- * @ORM\Table(name="account")
- * @ORM\Entity(repositoryClass="Tom32i\Bundle\SimpleSecurityBundle\Entity\Repository\UserRepository")
+ * @ORM\MappedSuperclass
  * @UniqueEntity(fields="email", message="user.email.used")
  * @UniqueEntity(fields="name", message="user.name.used")
  */
-class User implements AdvancedUserInterface, SafePasswordInterface, ConfirmableInterface, Serializable
+abstract class User implements UserInterface
 {
-    const ROLE_USER  = 'ROLE_USER';
-    const ROLE_ADMIN = 'ROLE_ADMIN';
-
     /**
      * @var integer
      *
@@ -111,7 +104,7 @@ class User implements AdvancedUserInterface, SafePasswordInterface, ConfirmableI
     public function __construct()
     {
         $this->enabled = false;
-        $this->roles   = [self::ROLE_USER];
+        $this->roles   = [];
         $this->salt    = self::generateToken();
     }
 

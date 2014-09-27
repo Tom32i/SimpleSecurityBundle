@@ -3,57 +3,17 @@
 namespace Tom32i\Bundle\SimpleSecurityBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\FormError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Tom32i\Bundle\SimpleSecurityBundle\Service\UserManager;
-use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\LoginType;
-use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType;
-use Tom32i\Bundle\SimpleSecurityBundle\Entity\User;
 
 /**
  * Security Controller
  */
 class SecurityController extends Controller
 {
-    /**
-     * Security context
-     *
-     * @var SecurityContextInterface
-     */
-    protected $securityContext;
-
-    /**
-     * User manager
-     *
-     * @var UserManager
-     */
-    protected $userManager;
-
-    /**
-     * Login success redirect route
-     *
-     * @var string
-     */
-    protected $redirectRoute;
-
-    /**
-     * Constructor
-     *
-     * @param SecurityContextInterface $securityContext
-     * @param UserManager $userManager
-     * @param string $redirectRoute
-     */
-    public function __construct(SecurityContextInterface $securityContext, UserManager $userManager, $redirectRoute)
-    {
-        $this->securityContext = $securityContext;
-        $this->userManager     = $userManager;
-        $this->redirectRoute   = $redirectRoute;
-    }
-
     /**
      * @Route("/login", name="login")
      * @Template()
@@ -63,20 +23,8 @@ class SecurityController extends Controller
         if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
 
         $session = $request->getSession();
-
-		$form = $this->createForm(
-            new LoginType,
-            [
-                '_username'   => $session->get(SecurityContext::LAST_USERNAME),
-                '_password'   => null,
-                '_remeber_me' => true,
-            ],
-            [
-                'action' => $this->generateUrl('login_check'),
-                'method' => 'POST',
-                'submit' => true,
-            ]
-        );
+        $user    = ['_username' => $session->get(SecurityContext::LAST_USERNAME), '_password' => null, '_remeber_me' => true];
+        $form    = $this->createForm('security_login', $user, ['action' => $this->generateUrl('login_check')]);
 
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
@@ -110,16 +58,8 @@ class SecurityController extends Controller
     {
         if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
 
-        $user = $this->userManager->createUser();
-        $form = $this->createForm(
-            new RegisterType,
-            $user,
-            [
-                'action' => $this->generateUrl('register'),
-                'method' => 'POST',
-                'submit' => true,
-            ]
-        );
+        $user = $this->getUserManager()->createUser();
+        $form = $this->createForm('security_register', $user, ['action' => $this->generateUrl('register')]);
 
         if ($request->isMethod('POST')) {
 
@@ -127,7 +67,7 @@ class SecurityController extends Controller
 
             if ($form->isValid()) {
 
-                $result = $this->userManager->register($user);
+                $result = $this->getUserManager()->register($user);
 
                 if ($result === true) {
                     return $this->redirect($this->generateUrl('email_confirmation'));
@@ -161,17 +101,13 @@ class SecurityController extends Controller
     {
         if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
 
-        $user = $this
-            ->getDoctrine()
-            ->getManager()
-            ->getRepository('Tom32iSimpleSecurityBundle:User')
-            ->findOneBy(['confirmationToken' => $token, 'enabled' => false]);
+        $user = $this->getUserManager()->getRepository()->findOneBy(['confirmationToken' => $token, 'enabled' => false]);
 
         if (!$user) {
             throw $this->createNotFoundException('This token has expired.');
         }
 
-        $result = $this->userManager->validate($user);
+        $result = $this->getUserManager()->validate($user);
 
         if ($result === true) {
 
@@ -190,7 +126,7 @@ class SecurityController extends Controller
      */
     protected function isLoggedIn()
     {
-        return $this->get('security.context')->isGranted('ROLE_USER');
+        return $this->getSecurityContext()->isGranted('IS_AUTHENTICATED_REMEMBERED');
     }
 
     /**
@@ -200,7 +136,7 @@ class SecurityController extends Controller
      */
     protected function redirectOnSuccess()
     {
-        return $this->redirect($this->generateUrl($this->redirectRoute));
+        return $this->redirect($this->generateUrl($this->getRedirectRoute()));
     }
 
     /**
@@ -210,8 +146,38 @@ class SecurityController extends Controller
      */
     protected function logUserIn(User $user)
     {
-        $token = $this->userManager->getAuthenticationToken($user);
+        $token = $this->getUserManager()->getAuthenticationToken($user);
 
-        $this->get('security.context')->setToken($token);
+        $this->getSecurityContext()->setToken($token);
+    }
+
+    /**
+     * Get security context
+     *
+     * @return SecurityContextInterface
+     */
+    protected function getSecurityContext()
+    {
+        return $this->get('security.context');
+    }
+
+    /**
+     * Get user manager
+     *
+     * @return UserManager
+     */
+    protected function getUserManager()
+    {
+        return $this->get('tom32i.simple_security.manager.user');
+    }
+
+    /**
+     * Get user manager
+     *
+     * @return UserManager
+     */
+    protected function getRedirectRoute()
+    {
+        return $this->getParameter('tom32i_simple_security.login_success_redirect');
     }
 }

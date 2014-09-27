@@ -12,6 +12,23 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class RegisterType extends AbstractType
 {
     /**
+     * User class name
+     *
+     * @var string
+     */
+    protected $userClassname;
+
+    /**
+     * Constructor
+     *
+     * @param string $class
+     */
+    public function __construct($userClassname)
+    {
+        $this->userClassname = $userClassname;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -36,9 +53,11 @@ class RegisterType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class'         => 'Tom32i\Bundle\SimpleSecurityBundle\Entity\User',
+                'data_class'         => $this->userClassname,
                 'validation_groups'  => ['Default', 'Registration'],
                 'cascade_validation' => true,
+                'method'             => 'POST',
+                'submit'             => true,
             ]
         );
     }
@@ -48,6 +67,6 @@ class RegisterType extends AbstractType
      */
     public function getName()
     {
-        return 'register';
+        return 'security_register';
     }
 }

@@ -34,6 +34,13 @@ class UserManager
     protected $mailer;
 
     /**
+     * User class name
+     *
+     * @var string
+     */
+    protected $userClassname;
+
+    /**
      * The main provider key
      *
      * @var string
@@ -47,11 +54,12 @@ class UserManager
      * @param MailManager   $mailer
      * @param string        $firewall
      */
-    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, MailManager $mailer, $firewall)
+    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, MailManager $mailer, $userClassname, $firewall)
     {
         $this->objectManager = $objectManager;
         $this->mailer        = $mailer;
         $this->validator     = $validator;
+        $this->userClassname = $userClassname;
         $this->firewall      = $firewall;
     }
 
@@ -62,7 +70,17 @@ class UserManager
      */
     public function createUser()
     {
-        return new User();
+        return new $this->userClassname;
+    }
+
+    /**
+     * Get User repository
+     *
+     * @return ObjectRepository
+     */
+    public function getRepository()
+    {
+        return $this->objectManager->getRepository($this->userClassname);
     }
 
     /**

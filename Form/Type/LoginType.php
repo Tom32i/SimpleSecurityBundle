@@ -25,8 +25,21 @@ class LoginType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'method' => 'POST',
+                'submit' => true,
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
-        return 'login';
+        return 'security_login';
     }
 }

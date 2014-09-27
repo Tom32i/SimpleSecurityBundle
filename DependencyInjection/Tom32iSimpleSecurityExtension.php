@@ -23,10 +23,31 @@ class Tom32iSimpleSecurityExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+
         $loader->load('services.xml');
+        $loader->load('forms.xml');
+        $loader->load('managers.xml');
 
         $container
-            ->getDefinition('tom32i.simple_security.controller.security')
-            ->replaceArgument(2, $config['login_success_redirect']);
+            ->getDefinition('tom32i.simple_security.manager.mail')
+            ->replaceArgument(4, $config['mailer_from']);
+
+        static::setParameters($container, $config, ['user_class', 'login_firewall', 'login_success_redirect']);
+    }
+
+    /**
+     * Set parameters
+     *
+     * @param ContainerBuilder $container
+     * @param array $config
+     * @param array $keys
+     */
+    static protected function setParameters(ContainerBuilder $container, array $config, array $keys)
+    {
+        $parameters = array_intersect_key($config, array_flip($keys));
+
+        foreach ($parameters as $key => $value) {
+            $container->setParameter('tom32i_simple_security.' . $key, $value);
+        }
     }
 }
