@@ -5,7 +5,7 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Tom32i\Bundle\SimpleSecurityBundle\Entity\User;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
  * User manager
@@ -86,11 +86,11 @@ class UserManager
     /**
      * Get authentication token for a given user
      *
-     * @param User $user
+     * @param UserInterface $user
      *
      * @return UsernamePasswordToken
      */
-    public function getAuthenticationToken(User $user)
+    public function getAuthenticationToken(UserInterface $user)
     {
         return new UsernamePasswordToken(
             $user,
@@ -103,9 +103,9 @@ class UserManager
     /**
      * Register an user
      *
-     * @param User $user
+     * @param UserInterface $user
      */
-    public function register(User $user)
+    public function register(UserInterface $user)
     {
         $user->setEnabled(false);
         $user->setConfirmationToken();
@@ -127,9 +127,9 @@ class UserManager
     /**
      * Validate an user's email
      *
-     * @param User $user
+     * @param UserInterface $user
      */
-    public function validate(User $user)
+    public function validate(UserInterface $user)
     {
         $user->eraseConfirmationToken();
         $user->setEnabled(true);

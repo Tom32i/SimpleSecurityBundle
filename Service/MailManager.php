@@ -8,7 +8,7 @@ use Swift_SwiftException;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Tom32i\Bundle\SimpleSecurityBundle\Interfaces\ConfirmableInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\ConfirmableInterface;
 
 /**
  * Mail Manager Class

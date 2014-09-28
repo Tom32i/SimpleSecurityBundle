@@ -12,12 +12,12 @@
     <services>
         <!-- Forms -->
         <service id="tom32i.simple_security.form.login" class="%tom32i.simple_security.form.login.class%">
-            <tag name="form.type" alias="security_login" />
+            <tag name="form.type" alias="login" />
         </service>
 
         <service id="tom32i.simple_security.form.register" class="%tom32i.simple_security.form.register.class%">
             <argument>%tom32i_simple_security.user_class%</argument>
-            <tag name="form.type" alias="security_register" />
+            <tag name="form.type" alias="register" />
         </service>
     </services>
 </container>

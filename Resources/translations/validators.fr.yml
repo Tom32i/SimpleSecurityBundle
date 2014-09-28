@@ -1,8 +1,10 @@
 user:
     name:
         invalid:    Votre nom doit faire entre 3 et 50 caractères.
+        used:       Ce nom d'utilisateur est déjà utilisé.
     email:
         invalid:    Votre adresse email doit être une adresse email valide.
+        used:       Cette adresse email est déjà utilisée.
     password:
         invalid:    Votre mot de passe doit fait au moins 5 caractères.
         mismatch:   Les deux mots de passes ne correspondent pas.

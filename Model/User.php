@@ -75,6 +75,7 @@ abstract class User implements UserInterface
     /**
      * @var array
      *
+     * @Assert\Count(min=1)
      * @ORM\Column(name="roles", type="simple_array")
      */
     protected $roles;

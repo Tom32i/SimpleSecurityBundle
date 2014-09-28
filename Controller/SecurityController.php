@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\FormError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
  * Security Controller
@@ -24,7 +25,7 @@ class SecurityController extends Controller
 
         $session = $request->getSession();
         $user    = ['_username' => $session->get(SecurityContext::LAST_USERNAME), '_password' => null, '_remeber_me' => true];
-        $form    = $this->createForm('security_login', $user, ['action' => $this->generateUrl('login_check')]);
+        $form    = $this->createForm('login', $user, ['action' => $this->generateUrl('login_check')]);
 
         if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
             $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
@@ -59,7 +60,7 @@ class SecurityController extends Controller
         if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
 
         $user = $this->getUserManager()->createUser();
-        $form = $this->createForm('security_register', $user, ['action' => $this->generateUrl('register')]);
+        $form = $this->createForm('register', $user, ['action' => $this->generateUrl('register')]);
 
         if ($request->isMethod('POST')) {
 
@@ -91,6 +92,8 @@ class SecurityController extends Controller
     public function emailConfirmationAction()
     {
         if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+
+        return [];
     }
 
     /**
@@ -144,7 +147,7 @@ class SecurityController extends Controller
      *
      * @param User $user The user to impersonate
      */
-    protected function logUserIn(User $user)
+    protected function logUserIn(UserInterface $user)
     {
         $token = $this->getUserManager()->getAuthenticationToken($user);
 
@@ -178,6 +181,6 @@ class SecurityController extends Controller
      */
     protected function getRedirectRoute()
     {
-        return $this->getParameter('tom32i_simple_security.login_success_redirect');
+        return $this->container->getParameter('tom32i_simple_security.login_success_redirect');
     }
 }

@@ -1,8 +1,5 @@
 form:
     login:
-        legend:                 Connexion
-        link:
-            register:           Pas encore de compte ?
         children:
             username:
                 label:          Identifiant
@@ -13,12 +10,9 @@ form:
             submit:
                 label:          Me connecter
     register:
-        legend:                 Inscription
-        link:
-            login:              Déjà inscrit ?
         children:
             name:
-                label:          Pseudo
+                label:          Nom d'utilisateur
             email:
                 label:          Email
             plainPassword:
@@ -30,13 +24,8 @@ form:
             submit:
                 label:          M'inscrire
 
-controller:
-    login:      Connexion
-    logout:     Déconnexion
-    register:   Inscription
-
 email_confirmation:
-    title:      Encore un effort ...
+    title:      Votre inscription est presque terminée
     content:    |
                 <p>Un email vous a été envoyé, il vous permettra d'activer votre compte.</p>
                 <p>À tout de suite !</p>
@@ -48,15 +37,15 @@ email:
     sign:   Cordialement.
 
     confirmation:
-        title:          Confirmation votre adresse email
-        content:        |
-                        <p>Bravo vous vous êtes inscrit sur LFEP !</p>
-                        <p>Veuillez cliquer sur le lien ci-dessous afin de valider cette inscription :</p>
-                        <a href="%url%">%url%</a>
+        title:      Confirmation votre adresse email
+        content:    |
+                    <p>Votre inscription est presque terminée</p>
+                    <p>Veuillez cliquer sur le lien ci-dessous afin de valider cette inscription :</p>
+                    <a href="%url%">%url%</a>
 
     reset_password:
-        title:          Mot de passe perdu
-        content:        |
-                        <p>Vous avez perdu votre mot de passe ?</p>
-                        <p>Veuillez cliquer sur le lien ci-dessous pour choisir votre nouveau mot de passe :</p>
-                        <a href="%url%">%url%</a>
+        title:      Mot de passe perdu
+        content:    |
+                    <p>Vous avez perdu votre mot de passe ?</p>
+                    <p>Veuillez cliquer sur le lien ci-dessous pour choisir votre nouveau mot de passe :</p>
+                    <a href="%url%">%url%</a>

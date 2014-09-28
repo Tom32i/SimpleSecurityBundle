@@ -67,6 +67,6 @@ class RegisterType extends AbstractType
      */
     public function getName()
     {
-        return 'security_register';
+        return 'register';
     }
 }

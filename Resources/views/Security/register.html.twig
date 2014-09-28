@@ -1,25 +1,5 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    {{ form_start(form) }}
-        <fieldset>
-            <legend>
-                {{ 'form.register.legend'|trans }}
-            </legend>
-
-            {{ form_errors(form) }}
-
-            {{ form_row(form.name) }}
-            {{ form_row(form.email) }}
-            {{ form_row(form.plainPassword) }}
-
-            {{ form_row(form.submit) }}
-        </fieldset>
-    {{ form_end(form) }}
-
-    <hr />
-
-    <a href="{{ path('login') }}">
-        {{ 'form.register.link.login'|trans }}
-    </a>
+    {{ form(form) }}
 {% endblock %}

@@ -40,6 +40,6 @@ class LoginType extends AbstractType
      */
     public function getName()
     {
-        return 'security_login';
+        return 'login';
     }
 }

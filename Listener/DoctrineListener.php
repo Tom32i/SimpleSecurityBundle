@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
-use Tom32i\Bundle\SimpleSecurityBundle\Interfaces\SafePasswordInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\SafePasswordInterface;
 
 /**
  * Doctrine Listener Class
