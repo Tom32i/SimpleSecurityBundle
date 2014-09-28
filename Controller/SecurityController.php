@@ -71,7 +71,7 @@ class SecurityController extends Controller
                 $result = $this->getUserManager()->register($user);
 
                 if ($result === true) {
-                    return $this->redirect($this->generateUrl('email_confirmation'));
+                    return $this->render('Tom32iSimpleSecurityBundle:Security:email_confirmation.html.twig');
                 }
 
                 foreach ($result as $error) {
@@ -83,17 +83,6 @@ class SecurityController extends Controller
         }
 
         return ['form' => $form->createView()];
-    }
-
-    /**
-     * @Route("/register/email", name="email_confirmation")
-     * @Template("Tom32iSimpleSecurityBundle:Security:email_confirmation.html.twig")
-     */
-    public function emailConfirmationAction()
-    {
-        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
-
-        return [];
     }
 
     /**
