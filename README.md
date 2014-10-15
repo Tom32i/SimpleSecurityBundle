@@ -38,7 +38,7 @@ simple_security:
 
 ### Create your custom user class:
 
-Extends `Tom32i\Bundle\SimpleSecurityBundle\Model\User`. 
+Extends `Tom32i\Bundle\SimpleSecurityBundle\Model\User`.
 
 ```
 <?php
