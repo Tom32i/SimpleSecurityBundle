@@ -62,23 +62,20 @@ class SecurityController extends Controller
         $user = $this->getUserManager()->createUser();
         $form = $this->createForm('register', $user, ['action' => $this->generateUrl('register')]);
 
-        if ($request->isMethod('POST')) {
+        $form->handleRequest($request);
 
-            $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            if ($form->isValid()) {
+            $result = $this->getUserManager()->register($user);
 
-                $result = $this->getUserManager()->register($user);
+            if ($result === true) {
+                return $this->render('Tom32iSimpleSecurityBundle:Security:email_confirmation.html.twig');
+            }
 
-                if ($result === true) {
-                    return $this->render('Tom32iSimpleSecurityBundle:Security:email_confirmation.html.twig');
-                }
-
-                foreach ($result as $error) {
-                    $form->addError(
-                        new FormError($error->getMessage(), 'form.register.error', ['message' => $error->getMessage()])
-                    );
-                }
+            foreach ($result as $error) {
+                $form->addError(
+                    new FormError($error->getMessage(), 'form.register.error', ['message' => $error->getMessage()])
+                );
             }
         }
 

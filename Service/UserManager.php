@@ -110,7 +110,7 @@ class UserManager
         $user->setEnabled(false);
         $user->setConfirmationToken();
 
-        $errors = $this->validator->validate($user, ['Confirmation']);
+        $errors = $this->validator->validate($user, null, ['Default', 'Registration', 'Confirmation']);
 
         if (count($errors) > 0) {
             return $errors;

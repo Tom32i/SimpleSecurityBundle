@@ -86,7 +86,6 @@ abstract class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="confirmation_token", type="string", length=32, nullable=true)
-     * @Assert\Null()
      * @Assert\NotBlank(groups={"Confirmation"})
      */
     protected $confirmationToken;
