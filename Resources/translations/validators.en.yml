@@ -1,0 +1,10 @@
+user:
+    username:
+        invalid:    Your username should be from 3 to 50 characters long.
+        used:       This username is already in use.
+    email:
+        invalid:    Your email address must be valid.
+        used:       This email address is already in use.
+    password:
+        invalid:    Your password should be at least 5 characters long.
+        mismatch:   The two passwords mismatch.

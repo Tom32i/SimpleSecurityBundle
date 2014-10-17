@@ -13,7 +13,7 @@ use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
  *
  * @ORM\MappedSuperclass
  * @UniqueEntity(fields="email", message="user.email.used")
- * @UniqueEntity(fields="name", message="user.name.used")
+ * @UniqueEntity(fields="username", message="user.username.used")
  */
 abstract class User implements UserInterface
 {
@@ -38,11 +38,11 @@ abstract class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=50, unique=true)
-     * @Assert\Length(min=3, max=50, minMessage="user.name.invalid", maxMessage="user.name.invalid")
-     * @Assert\NotBlank(message="user.name.invalid")
+     * @ORM\Column(name="username", type="string", length=50, unique=true)
+     * @Assert\Length(min=3, max=50, minMessage="user.username.invalid", maxMessage="user.username.invalid")
+     * @Assert\NotBlank(message="user.username.invalid")
      */
-    protected $name;
+    protected $username;
 
     /**
      * @var string
@@ -115,7 +115,7 @@ abstract class User implements UserInterface
      */
     public function __toString()
     {
-        return $this->getName();
+        return $this->getUsername();
     }
 
     /**
@@ -123,7 +123,7 @@ abstract class User implements UserInterface
      */
     public function serialize()
     {
-        return serialize([$this->id, $this->name, $this->email]);
+        return serialize([$this->id, $this->username, $this->email]);
     }
 
     /**
@@ -131,7 +131,7 @@ abstract class User implements UserInterface
      */
     public function unserialize($serialized)
     {
-        list($this->id, $this->name, $this->email) = unserialize($serialized);
+        list($this->id, $this->username, $this->email) = unserialize($serialized);
     }
 
     /**
@@ -299,27 +299,27 @@ abstract class User implements UserInterface
     }
 
     /**
-     * Set name
+     * Set username
      *
-     * @param string $name
+     * @param string $username
      *
      * @return User
      */
-    public function setName($name)
+    public function setUsername($username)
     {
-        $this->name = $name;
+        $this->username = $username;
 
         return $this;
     }
 
     /**
-     * Get name
+     * Get username
      *
      * @return string
      */
-    public function getName()
+    public function getUsername()
     {
-        return $this->name;
+        return $this->username;
     }
 
     /**
@@ -356,14 +356,6 @@ abstract class User implements UserInterface
     public function hasRole($role)
     {
         return in_array($role, $this->roles);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUsername()
-    {
-        return $this->getName();
     }
 
     /**
@@ -405,7 +397,7 @@ abstract class User implements UserInterface
      */
     public function equals(AdvancedUserInterface $user)
     {
-        return ($user->getId() === $this->getId()) || ($user->getEmail() === $this->getEmail()) || ($user->getName() === $this->getName());
+        return ($user->getId() === $this->getId()) || ($user->getEmail() === $this->getEmail()) || ($user->getUsername() === $this->getUsername());
     }
 
     /**

@@ -1,6 +1,6 @@
 user:
-    name:
-        invalid:    Votre nom doit faire entre 3 et 50 caractères.
+    username:
+        invalid:    Votre nom d'utilisateur doit faire entre 3 et 50 caractères.
         used:       Ce nom d'utilisateur est déjà utilisé.
     email:
         invalid:    Votre adresse email doit être une adresse email valide.

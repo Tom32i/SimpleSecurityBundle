@@ -89,10 +89,10 @@ class MailManager
     {
         $message = $this->createMessage(
             'email.confirmation.title',
-            array($user->getEmail() => $user->getName()),
+            array($user->getEmail() => $user->getUsername()),
             '@Tom32iSimpleSecurity/Email/validation.html.twig',
             array(
-                'name'  => $user->getName(),
+                'name'  => $user->getUsername(),
                 'token' => $user->getConfirmationToken(),
                 'root'  => $this->root,
             )
@@ -110,10 +110,10 @@ class MailManager
     {
         $message = $this->createMessage(
             'email.reset_password.title',
-            array($user->getEmail() => $user->getName()),
+            array($user->getEmail() => $user->getUsername()),
             '@Tom32iSimpleSecurity/Email/reset_password.html.twig',
             array(
-                'name'  => $user->getName(),
+                'name'  => $user->getUsername(),
                 'token' => $user->getConfirmationToken(),
                 'root'  => $this->root,
             )

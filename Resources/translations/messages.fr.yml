@@ -28,7 +28,6 @@ email_confirmation:
     title:      Votre inscription est presque terminée
     content:    |
                 <p>Un email vous a été envoyé, il vous permettra d'activer votre compte.</p>
-                <p>À tout de suite !</p>
     link:
         login:  Connexion
 
@@ -49,3 +48,4 @@ email:
                     <p>Vous avez perdu votre mot de passe ?</p>
                     <p>Veuillez cliquer sur le lien ci-dessous pour choisir votre nouveau mot de passe :</p>
                     <a href="%url%">%url%</a>
+                    <p>Si vous n'avez pas demander la réinitialisation de votre mot de passe, merci de ne pas tenir compte de cet email.</p>

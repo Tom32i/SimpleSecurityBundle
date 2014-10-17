@@ -84,7 +84,7 @@ security:
         default:
             entity:
                 class:    Acme\DemoBundle\Entity\User
-                property: name
+                property: username
 
     firewalls:
         default:
