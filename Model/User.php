@@ -5,6 +5,7 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Model;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
@@ -76,13 +77,6 @@ abstract class User implements UserInterface
      * @var array
      *
      * @Assert\Count(min=1)
-     * @Assert\All({
-     *     @Assert\NotBlank,
-     *     @Assert\Choice(callback={
-     *         "Tom32i\Bundle\SimpleSecurityBundle\Model\User",
-     *         "getAvailableRoles"
-     *     })
-     * })
      * @ORM\Column(name="roles", type="simple_array")
      */
     protected $roles;
@@ -373,6 +367,23 @@ abstract class User implements UserInterface
     static public function getAvailableRoles()
     {
         return [];
+    }
+
+    /**
+     * @Assert\Callback
+     */
+    public function validateRoles(ExecutionContextInterface $context)
+    {
+        $roles = static::getAvailableRoles();
+
+        foreach ($this->roles as $i => $role) {
+            if (!in_array($role, $roles)) {
+                $context
+                    ->buildViolation(sprintf('Uknown role "%s", available roles are: %s.', $role, join(', ', $roles)))
+                    ->atPath(sprintf('roles[%s]', $i))
+                    ->addViolation();
+            }
+        }
     }
 
     /**
