@@ -76,6 +76,13 @@ abstract class User implements UserInterface
      * @var array
      *
      * @Assert\Count(min=1)
+     * @Assert\All({
+     *     @Assert\NotBlank,
+     *     @Assert\Choice(callback={
+     *         "Tom32i\Bundle\SimpleSecurityBundle\Model\User",
+     *         "getAvailableRoles"
+     *     })
+     * })
      * @ORM\Column(name="roles", type="simple_array")
      */
     protected $roles;
@@ -356,6 +363,16 @@ abstract class User implements UserInterface
     public function hasRole($role)
     {
         return in_array($role, $this->roles);
+    }
+
+    /**
+     * Get the list of available roles
+     *
+     * @return array
+     */
+    static public function getAvailableRoles()
+    {
+        return [];
     }
 
     /**
