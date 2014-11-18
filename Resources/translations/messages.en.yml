@@ -29,11 +29,34 @@ form:
                 label:          Your email address
             submit:
                 label:          Reset my password
+    user_password:
+        children:
+            plainPassword:
+                children:
+                    first:
+                        label:  Password
+                    second:
+                        label:  Confirmation
+            submit:
+                label:          Change my password
+    user_email:
+        children:
+            email:
+                label:          Your email address
+            submit:
+                label:          Change my email address
 
 email_confirmation:
     title:      Your registration is almost complete
     content:    |
                 <p>An email has just been sent to you, it'll allow you to validate your email address.</p>
+    link:
+        login:  Sign in
+
+forgot_password_confirmation:
+    title:      Your password has been reset
+    content:    |
+                <p>An email has just been sent to you, it'll allow you to choose a new password.</p>
     link:
         login:  Sign in
 

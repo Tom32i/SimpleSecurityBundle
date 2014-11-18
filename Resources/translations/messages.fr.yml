@@ -29,6 +29,23 @@ form:
                 label:          Votre adresse email
             submit:
                 label:          Réinitialiser mon mot de passe
+    user_password:
+        children:
+            plainPassword:
+                children:
+                    first:
+                        label:  Mot de passe
+                    second:
+                        label:  Confirmation
+            submit:
+                label:          Modifier mon mot de passe
+    user_email:
+        children:
+            email:
+                label:          Votre adresse email
+            submit:
+                label:          Modifier mon adresse email
+
 
 email_confirmation:
     title:      Votre inscription est presque terminée
