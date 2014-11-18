@@ -32,7 +32,7 @@ class Tom32iSimpleSecurityExtension extends Extension
             ->getDefinition('tom32i.simple_security.manager.mail')
             ->replaceArgument(4, $config['mailer_from']);
 
-        static::setParameters($container, $config, ['user_class', 'login_firewall', 'login_success_redirect']);
+        $this->setParameters($container, $config, ['user_class', 'login_firewall', 'login_success_redirect']);
     }
 
     /**
@@ -42,7 +42,7 @@ class Tom32iSimpleSecurityExtension extends Extension
      * @param array $config
      * @param array $keys
      */
-    static protected function setParameters(ContainerBuilder $container, array $config, array $keys)
+    private function setParameters(ContainerBuilder $container, array $config, array $keys)
     {
         $parameters = array_intersect_key($config, array_flip($keys));
 

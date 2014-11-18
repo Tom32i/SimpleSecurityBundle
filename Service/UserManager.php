@@ -27,6 +27,13 @@ class UserManager
     protected $validator;
 
     /**
+     * Voucher manager
+     *
+     * @var VoucherManager
+     */
+    protected $voucherManager;
+
+    /**
      * Mail manager
      *
      * @var MailManager
@@ -51,16 +58,20 @@ class UserManager
      * Constructor
      *
      * @param ObjectManager $objectManager
-     * @param MailManager   $mailer
-     * @param string        $firewall
+     * @param ValidatorInterface $validator
+     * @param VoucherManager $voucherManager
+     * @param MailManager $mailer
+     * @param string $userClassname
+     * @param string $firewall
      */
-    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, MailManager $mailer, $userClassname, $firewall)
+    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherManager $voucherManager, MailManager $mailer, $userClassname, $firewall)
     {
-        $this->objectManager = $objectManager;
-        $this->mailer        = $mailer;
-        $this->validator     = $validator;
-        $this->userClassname = $userClassname;
-        $this->firewall      = $firewall;
+        $this->objectManager  = $objectManager;
+        $this->validator      = $validator;
+        $this->voucherManager = $voucherManager;
+        $this->mailer         = $mailer;
+        $this->userClassname  = $userClassname;
+        $this->firewall       = $firewall;
     }
 
     /**
@@ -104,45 +115,96 @@ class UserManager
      * Register an user
      *
      * @param UserInterface $user
+     *
+     * @return ConstraintViolationListInterface
      */
     public function register(UserInterface $user)
     {
         $user->setEnabled(false);
-        $user->setConfirmationToken();
 
         $errors = $this->validator->validate($user, null, ['Default', 'Registration', 'Confirmation']);
 
-        if (count($errors) > 0) {
-            return $errors;
+        if (count($errors) === 0) {
+
+            $this->objectManager->persist($user);
+            $this->objectManager->flush();
+
+            $voucher = $this->voucherManager->create($user, 'email');
+
+            $this->objectManager->persist($voucher);
+            $this->objectManager->flush();
+
+            $this->mailer->sendConfirmationEmailMessage($user, $voucher->getToken());
         }
 
-        $this->objectManager->persist($user);
-        $this->objectManager->flush();
-
-        $this->mailer->sendConfirmationEmailMessage($user);
-
-        return true;
+        return $errors;
     }
 
     /**
      * Validate an user's email
      *
      * @param UserInterface $user
+     *
+     * @return ConstraintViolationListInterface
      */
     public function validate(UserInterface $user)
     {
-        $user->eraseConfirmationToken();
         $user->setEnabled(true);
 
         $errors = $this->validator->validate($user);
 
-        if (count($errors) > 0) {
-            return $errors;
+        if (count($errors) === 0) {
+            $this->objectManager->persist($user);
+            $this->objectManager->flush();
         }
 
-        $this->objectManager->persist($user);
-        $this->objectManager->flush();
+        return $errors;
+    }
 
-        return true;
+    /**
+     * Reset password
+     *
+     * @param UserInterface $user
+     *
+     * @return ConstraintViolationListInterface
+     */
+    public function resetPassword(UserInterface $user)
+    {
+        $errors = $this->validator->validate($user, null, ['ResetPassword']);
+
+        if (count($errors) === 0) {
+            $this->objectManager->persist($user);
+            $this->objectManager->flush();
+
+            $voucher = $this->voucherManager->create($user, 'password');
+
+            $this->objectManager->persist($voucher);
+            $this->objectManager->flush();
+
+            $this->mailer->sendResetPasswordMessage($user, $voucher->getToken());
+        }
+
+        return $errors;
+    }
+
+    /**
+     * Set password
+     *
+     * @param UserInterface $user
+     *
+     * @return ConstraintViolationListInterface
+     */
+    public function setPassword(UserInterface $user, $password)
+    {
+        $user->setPlainPassword($password);
+
+        $errors = $this->validator->validate($user, null, ['ChangePassword']);
+
+        if (count($errors) === 0) {
+            $this->objectManager->persist($user);
+            $this->objectManager->flush();
+        }
+
+        return $errors;
     }
 }

@@ -38,7 +38,7 @@ simple_security:
 
 ### Create your custom user class:
 
-Extends `Tom32i\Bundle\SimpleSecurityBundle\Model\User`.
+Extends `Tom32i\Bundle\SimpleSecurityBundle\Entity\User`.
 
 ```
 <?php
@@ -47,7 +47,7 @@ namespace Acme\DemoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Tom32i\Bundle\SimpleSecurityBundle\Model\User as SimpleSecurityUser;
+use Tom32i\Bundle\SimpleSecurityBundle\Entity\User as SimpleSecurityUser;
 
 /**
  * User
@@ -68,6 +68,16 @@ class User extends SimpleSecurityUser
 
         $this->addRole(static::ROLE_USER);
     }
+    
+    /**
+     * Get available roles (used for validation)
+     *
+     * @return array    
+     */
+    static public function getAvailableRoles()
+    {
+        return [static::ROLE_USER];
+    }
 }
 ```
 
@@ -78,11 +88,13 @@ Set up encorder and provider for your custom user class `Acme\DemoBundle\Entity\
 ```
 security:
     encoders:
+    	# Choose an encoder for your User class:    
         Acme\DemoBundle\Entity\User: sha512
 
     providers:
         default:
             entity:
+            	# Register your entity as an User provider:
                 class:    Acme\DemoBundle\Entity\User
                 property: username
 
@@ -92,6 +104,7 @@ security:
             form_login:
                 login_path: /login
                 check_path: /login-check
+                # Set the credentials parameters to match the Login form:
                 username_parameter: "login[username]"
                 password_parameter: "login[password]"
             logout:
@@ -102,5 +115,10 @@ security:
                 lifetime: 31536000
                 path:     /
                 domain:   ~
+                # ... and the "Remember me" parameter as well:
                 remember_me_parameter: "login[remember_me]"
+                
+    access_control:
+    	# Allow anonymous users to access login, register and forgot password routes:
+        - { path: ^/(login|register|forgot-password), roles: IS_AUTHENTICATED_ANONYMOUSLY }
 ```

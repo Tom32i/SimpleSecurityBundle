@@ -1,6 +1,6 @@
 <?php
 
-namespace Tom32i\Bundle\SimpleSecurityBundle\Model;
+namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -50,6 +50,8 @@ abstract class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
+     * @Assert\NotBlank
+     * @Assert\Null(groups="ChangePassword")
      */
     protected $password;
 
@@ -83,16 +85,6 @@ abstract class User implements UserInterface
     protected $roles;
 
     /**
-     * Random string sent to the user email address in order to verify it
-     *
-     * @var string
-     *
-     * @ORM\Column(name="confirmation_token", type="string", length=32, nullable=true)
-     * @Assert\NotBlank(groups={"Confirmation"})
-     */
-    protected $confirmationToken;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="enabled", type="boolean")
@@ -107,7 +99,7 @@ abstract class User implements UserInterface
     {
         $this->enabled = false;
         $this->roles   = [];
-        $this->salt    = self::generateToken();
+        $this->salt    = static::generateToken();
     }
 
     /**
@@ -203,7 +195,10 @@ abstract class User implements UserInterface
      */
     public function setPlainPassword($plainPassword)
     {
-        $this->plainPassword = $plainPassword;
+        if ($plainPassword) {
+            $this->plainPassword = $plainPassword;
+            $this->password      = null;
+        }
 
         return $this;
     }
@@ -331,7 +326,7 @@ abstract class User implements UserInterface
      *
      * @return StatedEntity
      */
-    public function setEnabled($enabled)
+    public function setEnabled($enabled = true)
     {
         $this->enabled = (bool) $enabled;
 
@@ -361,7 +356,7 @@ abstract class User implements UserInterface
     }
 
     /**
-     * Get the list of available roles
+     * Get the list of available roles (used for validation)
      *
      * @return array
      */
@@ -388,40 +383,6 @@ abstract class User implements UserInterface
     }
 
     /**
-     * Generate Token
-     *
-     * @return string
-     */
-    public static function generateToken()
-    {
-        return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
-    }
-
-    /**
-     * Set confirmationToken
-     *
-     * @param string $confirmationToken
-     *
-     * @return User
-     */
-    public function setConfirmationToken($confirmationToken = null)
-    {
-        $this->confirmationToken = empty($confirmationToken) ? self::generateToken() : $confirmationToken;
-
-        return $this;
-    }
-
-    /**
-     * Get confirmationToken
-     *
-     * @return string
-     */
-    public function getConfirmationToken()
-    {
-        return $this->confirmationToken;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function equals(AdvancedUserInterface $user)
@@ -435,18 +396,6 @@ abstract class User implements UserInterface
     public function eraseCredentials()
     {
         $this->plainPassword = null;
-
-        return $this;
-    }
-
-    /**
-     * Erase confirmation token
-     *
-     * @return User
-     */
-    public function eraseConfirmationToken()
-    {
-        $this->confirmationToken = null;
 
         return $this;
     }
@@ -473,5 +422,15 @@ abstract class User implements UserInterface
     public function isCredentialsNonExpired()
     {
         return true;
+    }
+
+    /**
+     * Generate token
+     *
+     * @return string
+     */
+    public static function generateToken()
+    {
+        return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
     }
 }

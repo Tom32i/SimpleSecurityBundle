@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 /**
  * User interface
  */
-interface UserInterface extends AdvancedUserInterface, SafePasswordInterface, ConfirmableInterface, Serializable
+interface UserInterface extends AdvancedUserInterface, SafePasswordInterface, Serializable
 {
     /**
      * Get email

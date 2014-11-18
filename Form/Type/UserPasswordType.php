@@ -5,11 +5,12 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 /**
- * Register type
+ * User Password type
  */
-class RegisterType extends AbstractType
+class UserPasswordType extends AbstractType
 {
     /**
      * User class name
@@ -33,9 +34,15 @@ class RegisterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ($options['current_password']) {
+            $builder->add(
+                'password',
+                'password',
+                ['constraints' => [new UserPassword]]
+            );
+        }
+
         $builder
-            ->add('username', 'text')
-            ->add('email', 'email')
             ->add(
                 'plainPassword',
                 'repeated',
@@ -54,10 +61,11 @@ class RegisterType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class'         => $this->userClassname,
-                'validation_groups'  => ['Default', 'Registration'],
-                'cascade_validation' => true,
+                'validation_groups'  => ['ChangePassword'],
                 'method'             => 'POST',
+                'cascade_validation' => true,
                 'submit'             => true,
+                'current_password'   => true,
             ]
         );
     }
@@ -67,6 +75,6 @@ class RegisterType extends AbstractType
      */
     public function getName()
     {
-        return 'register';
+        return 'user_password';
     }
 }

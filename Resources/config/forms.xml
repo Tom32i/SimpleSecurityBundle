@@ -7,6 +7,9 @@
     <parameters>
         <parameter key="tom32i.simple_security.form.login.class">Tom32i\Bundle\SimpleSecurityBundle\Form\Type\LoginType</parameter>
         <parameter key="tom32i.simple_security.form.register.class">Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType</parameter>
+        <parameter key="tom32i.simple_security.form.user_password.class">Tom32i\Bundle\SimpleSecurityBundle\Form\Type\UserPasswordType</parameter>
+        <parameter key="tom32i.simple_security.form.user_email.class">Tom32i\Bundle\SimpleSecurityBundle\Form\Type\UserEmailType</parameter>
+        <parameter key="tom32i.simple_security.form.forgot_password.class">Tom32i\Bundle\SimpleSecurityBundle\Form\Type\ForgotPasswordType</parameter>
     </parameters>
 
     <services>
@@ -18,6 +21,20 @@
         <service id="tom32i.simple_security.form.register" class="%tom32i.simple_security.form.register.class%">
             <argument>%tom32i_simple_security.user_class%</argument>
             <tag name="form.type" alias="register" />
+        </service>
+
+        <service id="tom32i.simple_security.form.user_password" class="%tom32i.simple_security.form.user_password.class%">
+            <argument>%tom32i_simple_security.user_class%</argument>
+            <tag name="form.type" alias="user_password" />
+        </service>
+
+        <service id="tom32i.simple_security.form.user_email" class="%tom32i.simple_security.form.user_email.class%">
+            <argument>%tom32i_simple_security.user_class%</argument>
+            <tag name="form.type" alias="user_email" />
+        </service>
+
+        <service id="tom32i.simple_security.form.forgot_password" class="%tom32i.simple_security.form.forgot_password.class%">
+            <tag name="form.type" alias="forgot_password" />
         </service>
     </services>
 </container>

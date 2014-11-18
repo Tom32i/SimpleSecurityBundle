@@ -23,6 +23,12 @@ form:
                         label:  Confirmation
             submit:
                 label:          Register
+    forgot_password:
+        children:
+            email:
+                label:          Your email address
+            submit:
+                label:          Reset my password
 
 email_confirmation:
     title:      Your registration is almost complete

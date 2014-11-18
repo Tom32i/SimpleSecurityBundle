@@ -23,11 +23,24 @@ form:
                         label:  Confirmation
             submit:
                 label:          M'inscrire
+    forgot_password:
+        children:
+            email:
+                label:          Votre adresse email
+            submit:
+                label:          Réinitialiser mon mot de passe
 
 email_confirmation:
     title:      Votre inscription est presque terminée
     content:    |
                 <p>Un email vous a été envoyé, il vous permettra d'activer votre compte.</p>
+    link:
+        login:  Connexion
+
+forgot_password_confirmation:
+    title:      Votre mot de passe a été réinitialisé
+    content:    |
+                <p>Un email vous a été envoyé, il vous permettra de choisir un nouveau mot de passe.</p>
     link:
         login:  Connexion
 

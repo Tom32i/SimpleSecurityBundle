@@ -8,7 +8,7 @@ use Swift_SwiftException;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\ConfirmableInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
  * Mail Manager Class
@@ -63,11 +63,18 @@ class MailManager
     }
 
     /**
-     * Send an email to the user to confirm its email address
+     * Create a new message
      *
-     * @param ConfirmableInterface $user The user to send the email to.
+     * @param string $title
+     * @param strin|array $to
+     * @param string $template
+     * @param array $parameters
+     * @param string|array $from
+     * @param string $type
+     *
+     * @return Swift_Message
      */
-    protected function createMessage($title, $to, $template, $parameters = array(), $from = null, $type = 'text/html')
+    protected function createMessage($title, $to, $template, $parameters = [], $from = null, $type = 'text/html')
     {
         if ($from === null) {
             $from = $this->from;
@@ -83,40 +90,42 @@ class MailManager
     /**
      * Send an email to the user to confirm its email address
      *
-     * @param ConfirmableInterface $user The user to send the email to.
+     * @param UserInterface $user The user to send the email to
+     * @param string $token The token
      */
-    public function sendConfirmationEmailMessage(ConfirmableInterface $user)
+    public function sendConfirmationEmailMessage(UserInterface $user, $token)
     {
         $message = $this->createMessage(
             'email.confirmation.title',
-            array($user->getEmail() => $user->getUsername()),
+            [$user->getEmail() => $user->getUsername()],
             '@Tom32iSimpleSecurity/Email/validation.html.twig',
-            array(
+            [
                 'name'  => $user->getUsername(),
-                'token' => $user->getConfirmationToken(),
+                'token' => $token,
                 'root'  => $this->root,
-            )
+            ]
         );
 
         $this->mailer->send($message);
     }
 
     /**
-     * Send an email to the user to confirm its email address
+     * Send an email to the user to choose a new password
      *
-     * @param ConfirmableInterface $user The user to send the email to.
+     * @param UserInterface $user The user to send the email to
+     * @param string $token The token
      */
-    public function sendNewPasswordMessage(ConfirmableInterface $user)
+    public function sendResetPasswordMessage(UserInterface $user, $token)
     {
         $message = $this->createMessage(
             'email.reset_password.title',
-            array($user->getEmail() => $user->getUsername()),
+            [$user->getEmail() => $user->getUsername()],
             '@Tom32iSimpleSecurity/Email/reset_password.html.twig',
-            array(
+            [
                 'name'  => $user->getUsername(),
-                'token' => $user->getConfirmationToken(),
+                'token' => $token,
                 'root'  => $this->root,
-            )
+            ]
         );
 
         $this->mailer->send($message);

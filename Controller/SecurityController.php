@@ -8,7 +8,9 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\FormError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher;
 
 /**
  * Security Controller
@@ -68,7 +70,7 @@ class SecurityController extends Controller
 
             $result = $this->getUserManager()->register($user);
 
-            if ($result === true) {
+            if (count($result) === 0) {
                 return $this->render('Tom32iSimpleSecurityBundle:Security:email_confirmation.html.twig');
             }
 
@@ -83,29 +85,84 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/register/email/{token}", name="email_validation")
+     * @Route("/register/email/{token}", name="email_validation", defaults={"type"="email"})
+     * @ParamConverter(options={"repository_method"="findNonExpired"})
      * @Template()
      */
-    public function emailValidationAction($token)
+    public function emailValidationAction(Voucher $voucher)
     {
         if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
 
-        $user = $this->getUserManager()->getRepository()->findOneBy(['confirmationToken' => $token, 'enabled' => false]);
+        $user   = $this->getVoucherManager()->activate($voucher);
+        $errors = $this->getUserManager()->validate($user);
 
-        if (!$user) {
-            throw $this->createNotFoundException('This token has expired.');
-        }
-
-        $result = $this->getUserManager()->validate($user);
-
-        if ($result === true) {
-
+        if (count($errors) === 0) {
             $this->logUserIn($user);
 
             return $this->redirectOnSuccess();
         }
 
-        return ['errors' => $result];
+        return ['errors' => $errors];
+    }
+
+    /**
+     * @Route("/forgot-password", name="forgot_password")
+     * @Template("Tom32iSimpleSecurityBundle:Security:forgot_password.html.twig")
+     */
+    public function forgotPasswordAction(Request $request)
+    {
+        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+
+        $form = $this->createForm('forgot_password', [], ['action' => $this->generateUrl('forgot_password')]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $user = $this->getUserManager()->getRepository()->findOneBy([
+                'email' => $form->getData(),
+            ]);
+
+            if ($user) {
+                $this->getUserManager()->resetPassword($user);
+            }
+
+            return $this->render('Tom32iSimpleSecurityBundle:Security:forgot_password_confirmation.html.twig');
+        }
+
+        return ['form' => $form->createView()];
+    }
+
+    /**
+     * @Route("/forgot-password/{token}", name="choose_password", defaults={"type"="password"})
+     * @ParamConverter(options={"repository_method"="findNonExpired"})
+     * @Template("Tom32iSimpleSecurityBundle:Security:choose_password.html.twig")
+     */
+    public function choosePasswordAction(Request $request, Voucher $voucher)
+    {
+        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+
+        $user = $voucher->getUser();
+        $form = $this->createForm('user_password', $user, [
+            'action'           => $this->generateUrl('choose_password', ['token' => $voucher->getToken()]),
+            'current_password' => false,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $errors = $this->getUserManager()->setPassword($user, $user->getPlainPassword());
+
+            if (count($errors) === 0) {
+                $this->logUserIn($user);
+                $this->getVoucherManager()->activate($voucher);
+
+                return $this->redirectOnSuccess();
+            }
+        }
+
+        return ['form' => $form->createView()];
     }
 
     /**
@@ -158,6 +215,15 @@ class SecurityController extends Controller
     protected function getUserManager()
     {
         return $this->get('tom32i.simple_security.manager.user');
+    }
+    /**
+     * Get voucher manager
+     *
+     * @return VoucherManager
+     */
+    protected function getVoucherManager()
+    {
+        return $this->get('tom32i.simple_security.manager.voucher');
     }
 
     /**
