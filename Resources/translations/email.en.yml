@@ -1,0 +1,17 @@
+hello:  "Hello %name%,"
+sign:   Regards.
+
+registration:
+    title:      Confirm your email address
+    content:    |
+                <p>Your registration is almost complete</p>
+                <p>Please follow the link below to validate your email address:</p>
+                <a href="%url%">%url%</a>
+
+reset_password:
+    title:      Reset your password
+    content:    |
+                <p>Did you lost your password?</p>
+                <p>If so, please follow the link below.</p>
+                <a href="%url%">%url%</a>
+                <p>Otherwise ignore this email.</p>

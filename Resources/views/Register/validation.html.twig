@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+    <h1>
+        {{ 'register.validation.title'|trans|raw }}
+    </h1>
+
+    <p>{{ 'register.validation.errors'|trans|raw }}</p>
+
+    {% if errors|length %}
+        <ul>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

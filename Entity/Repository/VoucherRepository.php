@@ -13,21 +13,46 @@ use Doctrine\Common\Collections\Criteria;
 class VoucherRepository extends EntityRepository
 {
     /**
-     * Find non expired voucher
+     * Find non expired voucher by its token
+     *
+     * @param string $token
+     *
+     * @return Voucher|null The entity instance or NULL if the entity can not be found.
+     */
+    public function findNonExpiredByToken($token)
+    {
+        var_dump("findNonExpiredByToken", $token);
+        die();
+
+        return $this
+            ->createQueryBuilder('voucher')
+
+            ->where('voucher.token <= :token')
+            ->setParameter('token', $token)
+
+            ->andWhere('voucher.expiration > :date')
+            ->setParameter('date', new DateTime)
+
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    /**
+     * Find all expired vouchers
      *
      * @param array $criteria
      * @param array|null $orderBy
      *
-     * @return Voucher|null The entity instance or NULL if the entity can not be found.
+     * @return array
      */
-    public function findNonExpired(array $criteria, array $orderBy = null)
+    public function findAllExpired()
     {
-        return $this->findOneBy(
-            array_merge(
-                $criteria,
-                [Criteria::expr()->gt('expiration', new DateTime)]
-            ),
-            $orderBy
-        );
+        return $this
+            ->createQueryBuilder('voucher')
+
+            ->where('voucher.expiration <= :date')
+            ->setParameter('date', new DateTime)
+
+            ->getQuery()
+            ->getResult();
     }
 }

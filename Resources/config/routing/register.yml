@@ -1,0 +1,3 @@
+register:
+    resource: "@Tom32iSimpleSecurityBundle/Controller/RegisterController.php"
+    type:     annotation

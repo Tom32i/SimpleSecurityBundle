@@ -1,0 +1,3 @@
+login:
+    resource: "@Tom32iSimpleSecurityBundle/Controller/LoginController.php"
+    type:     annotation

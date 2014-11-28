@@ -68,6 +68,14 @@ class VoucherManager
     }
 
     /**
+     * Collect expired vouchers and add them to trash
+     */
+    public function trashExpiredVouchers()
+    {
+        $this->trash = array_merge($this->trash, $this->getRepository()->findAllExpired());
+    }
+
+    /**
      * Clear trash
      */
     public function clearTrash()
