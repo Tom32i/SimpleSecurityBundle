@@ -1,0 +1,8 @@
+parameters:
+    tom32i_simple_security.form.login.class: Tom32i\Bundle\SimpleSecurityBundle\Form\Type\LoginType
+
+services:
+    tom32i_simple_security.form.login:
+        class:  %tom32i_simple_security.form.login.class%
+        tags:
+            - { name: form.type, alias: login }

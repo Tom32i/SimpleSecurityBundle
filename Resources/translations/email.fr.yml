@@ -1,0 +1,17 @@
+hello:  "Bonjour %name%,"
+sign:   Cordialement.
+
+registration:
+    title:      Confirmation de votre adresse email
+    content:    |
+                <p>Votre inscription est presque terminée</p>
+                <p>Veuillez cliquer sur le lien ci-dessous afin de valider cette inscription :</p>
+                <a href="%url%">%url%</a>
+
+reset_password:
+    title:      Mot de passe perdu
+    content:    |
+                <p>Vous avez perdu votre mot de passe ?</p>
+                <p>Veuillez cliquer sur le lien ci-dessous pour choisir votre nouveau mot de passe :</p>
+                <a href="%url%">%url%</a>
+                <p>Si vous n'avez pas demander la réinitialisation de votre mot de passe, merci de ne pas tenir compte de cet email.</p>

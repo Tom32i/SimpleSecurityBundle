@@ -73,10 +73,33 @@ class VoucherManager
     public function clearTrash()
     {
         foreach ($this->trash as $voucher) {
-            $this->objectManager->delete($voucher);
+            $this->objectManager->remove($voucher);
         }
 
+        $this->objectManager->flush();
         $this->trash = [];
+
+        return $this;
+    }
+
+    /**
+     * Collect expired vouchers and add them to trash
+     */
+    public function trashExpiredVouchers()
+    {
+        $this->trash = array_merge($this->trash, $this->getRepository()->findAllExpired());
+
+        return $this;
+    }
+
+    /**
+     * Get trash length
+     *
+     * @return integer
+     */
+    public function getTrashLength()
+    {
+        return count($this->trash);
     }
 
     /**

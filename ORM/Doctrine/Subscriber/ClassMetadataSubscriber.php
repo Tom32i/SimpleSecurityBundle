@@ -3,8 +3,8 @@
 namespace Tom32i\Bundle\SimpleSecurityBundle\ORM\Doctrine\Subscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Events;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
@@ -34,7 +34,7 @@ class ClassMetadataSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return [Events::loadClassMetadata];
+        return [ Events::loadClassMetadata ];
     }
 
     /**

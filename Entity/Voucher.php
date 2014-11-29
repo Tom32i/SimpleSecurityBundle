@@ -43,7 +43,7 @@ class Voucher implements VoucherInterface
      *
      * @var UserInterface
      *
-     * @ORM\OneToOne(targetEntity="UserInterface")
+     * @ORM\ManyToOne(targetEntity="UserInterface")
      * @ORM\JoinColumn(name="user")
      * @Assert\NotNull
      */

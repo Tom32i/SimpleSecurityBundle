@@ -1,0 +1,15 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+    <h1>
+        {{ 'register.confirmation.title'|trans|raw }}
+    </h1>
+
+    <p>
+        {{ 'register.confirmation.content'|trans|raw }}
+    </p>
+
+    <a href="{{ path('login') }}">
+        {{ 'register.confirmation.link.login'|trans }}
+    </a>
+{% endblock %}

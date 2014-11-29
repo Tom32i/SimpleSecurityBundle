@@ -81,10 +81,32 @@ class MailManager
         }
 
         return Swift_Message::newInstance()
-            ->setSubject($this->translator->trans($title))
+            ->setSubject($this->translator->trans($title, [], 'email'))
             ->setFrom($this->from)
             ->setTo($to)
             ->setBody($this->templating->render($template, $parameters), 'text/html');
+    }
+
+    /**
+     * Send an email to the user to confirm its email address after registration
+     *
+     * @param UserInterface $user The user to send the email to
+     * @param string $token The token
+     */
+    public function sendRegistrationMessage(UserInterface $user, $token)
+    {
+        $message = $this->createMessage(
+            'registration.title',
+            [$user->getEmail() => $user->getUsername()],
+            '@Tom32iSimpleSecurity/Message/registration.html.twig',
+            [
+                'name'  => $user->getUsername(),
+                'token' => $token,
+                'root'  => $this->root,
+            ]
+        );
+
+        $this->mailer->send($message);
     }
 
     /**
@@ -96,9 +118,9 @@ class MailManager
     public function sendConfirmationEmailMessage(UserInterface $user, $token)
     {
         $message = $this->createMessage(
-            'email.confirmation.title',
+            'confirmation.title',
             [$user->getEmail() => $user->getUsername()],
-            '@Tom32iSimpleSecurity/Email/validation.html.twig',
+            '@Tom32iSimpleSecurity/Message/validation.html.twig',
             [
                 'name'  => $user->getUsername(),
                 'token' => $token,
@@ -118,9 +140,9 @@ class MailManager
     public function sendResetPasswordMessage(UserInterface $user, $token)
     {
         $message = $this->createMessage(
-            'email.reset_password.title',
+            'reset_password.title',
             [$user->getEmail() => $user->getUsername()],
-            '@Tom32iSimpleSecurity/Email/reset_password.html.twig',
+            '@Tom32iSimpleSecurity/Message/reset_password.html.twig',
             [
                 'name'  => $user->getUsername(),
                 'token' => $token,

@@ -2,10 +2,12 @@
 
 namespace Tom32i\Bundle\SimpleSecurityBundle\Behaviour;
 
+use Symfony\Component\Security\Core\User\UserInterface as SymfonyUserInsterface;
+
 /**
  * Safe password interface
  */
-interface SafePasswordInterface
+interface SafePasswordInterface extends SymfonyUserInsterface
 {
     /**
      * Get plain password

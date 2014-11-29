@@ -50,8 +50,7 @@ abstract class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     * @Assert\NotBlank
-     * @Assert\Null(groups="ChangePassword")
+     * @Assert\Null(groups={"ChangePassword", "Registration"})
      */
     protected $password;
 

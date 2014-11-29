@@ -1,33 +1,42 @@
 <?php
 
-namespace Tom32i\Bundle\SimpleSecurityBundle\Listener;
+namespace Tom32i\Bundle\SimpleSecurityBundle\ORM\Doctrine\Subscriber;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Events;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\SafePasswordInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Service\Authenticator;
 
 /**
- * Doctrine Listener Class
+ * Password Subscriber
  */
-class DoctrineListener
+class PasswordSubscriber implements EventSubscriber
 {
     /**
-     * Encoder Factory
+     * Authenticator
      *
-     * @var EncoderFactoryInterface
+     * @var Authenticator
      */
-    protected $factory;
+    protected $authenticator;
 
     /**
      * Constructor
      *
-     * @param EncoderFactoryInterface $factory
+     * @param Authenticator $authenticator
      */
-    public function __construct(EncoderFactoryInterface $factory)
+    public function __construct(Authenticator $authenticator)
     {
-        $this->factory = $factory;
+        $this->authenticator = $authenticator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSubscribedEvents()
+    {
+        return [ Events::prePersist, Events::preUpdate ];
     }
 
     /**
@@ -58,30 +67,12 @@ class DoctrineListener
      */
     protected function onPersist($entity, ObjectManager $objectManager = null)
     {
-        if ($entity instanceof AdvancedUserInterface && $entity instanceof SafePasswordInterface) {
-            $this->encodePassword($entity);
-            $entity->eraseCredentials();
+        if ($entity instanceof SafePasswordInterface) {
+            $this->authenticator->encodePassword($entity);
 
             if ($objectManager) {
                 $this->recomputeChanges($objectManager, $entity);
             }
-        }
-    }
-
-    /**
-     * Encode User password
-     *
-     * @param SafePasswordInterface $user The User
-     */
-    protected function encodePassword(SafePasswordInterface $user)
-    {
-        $plain = $user->getPlainPassword();
-
-        if (!empty($plain)) {
-            $encoder  = $this->factory->getEncoder($user);
-            $password = $encoder->encodePassword($plain, $user->getSalt());
-
-            $user->setPassword($password);
         }
     }
 

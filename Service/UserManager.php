@@ -3,7 +3,6 @@
 namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
@@ -48,13 +47,6 @@ class UserManager
     protected $userClassname;
 
     /**
-     * The main provider key
-     *
-     * @var string
-     */
-    protected $firewall;
-
-    /**
      * Constructor
      *
      * @param ObjectManager $objectManager
@@ -62,16 +54,14 @@ class UserManager
      * @param VoucherManager $voucherManager
      * @param MailManager $mailer
      * @param string $userClassname
-     * @param string $firewall
      */
-    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherManager $voucherManager, MailManager $mailer, $userClassname, $firewall)
+    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherManager $voucherManager, MailManager $mailer, $userClassname)
     {
         $this->objectManager  = $objectManager;
         $this->validator      = $validator;
         $this->voucherManager = $voucherManager;
         $this->mailer         = $mailer;
         $this->userClassname  = $userClassname;
-        $this->firewall       = $firewall;
     }
 
     /**
@@ -95,23 +85,6 @@ class UserManager
     }
 
     /**
-     * Get authentication token for a given user
-     *
-     * @param UserInterface $user
-     *
-     * @return UsernamePasswordToken
-     */
-    public function getAuthenticationToken(UserInterface $user)
-    {
-        return new UsernamePasswordToken(
-            $user,
-            $user->getPassword(),
-            $this->firewall,
-            $user->getRoles()
-        );
-    }
-
-    /**
      * Register an user
      *
      * @param UserInterface $user
@@ -129,12 +102,12 @@ class UserManager
             $this->objectManager->persist($user);
             $this->objectManager->flush();
 
-            $voucher = $this->voucherManager->create($user, 'email');
+            $voucher = $this->voucherManager->create($user, 'registration');
 
             $this->objectManager->persist($voucher);
             $this->objectManager->flush();
 
-            $this->mailer->sendConfirmationEmailMessage($user, $voucher->getToken());
+            $this->mailer->sendRegistrationMessage($user, $voucher->getToken());
         }
 
         return $errors;
