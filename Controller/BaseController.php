@@ -17,7 +17,7 @@ abstract class BaseController extends Controller
      */
     protected function isLoggedIn()
     {
-        return $this->getSecurityContext()->isGranted('IS_AUTHENTICATED_REMEMBERED');
+        return $this->getAuthorizationChecker()->isGranted('IS_AUTHENTICATED_REMEMBERED');
     }
 
     /**
@@ -41,17 +41,27 @@ abstract class BaseController extends Controller
     {
         $token = $this->getAuthenticator()->getAuthenticationToken($user);
 
-        $this->getSecurityContext()->setToken($token);
+        $this->tokenStorage()->setToken($token);
     }
 
     /**
-     * Get security context
+     * Get authorization checker
      *
-     * @return SecurityContextInterface
+     * @return AuthorizationCheckerInterface
      */
-    protected function getSecurityContext()
+    protected function getAuthorizationChecker()
     {
-        return $this->get('security.context');
+        return $this->get('security.authorization_checker');
+    }
+
+    /**
+     * Get token storage
+     *
+     * @return TokenStorage
+     */
+    protected function getTokenStorage()
+    {
+        return $this->get('security.token_storage');
     }
 
     /**
