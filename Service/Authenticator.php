@@ -17,7 +17,7 @@ class Authenticator
      *
      * @var EncoderFactoryInterface
      */
-    protected $encoderFactory;
+    protected $factory;
 
     /**
      * The firewall to log user into
@@ -29,11 +29,11 @@ class Authenticator
     /**
      * Constructor
      *
-     * @param EncoderFactoryInterface $encoderFactory
+     * @param EncoderFactoryInterface $factory
      */
-    public function __construct(EncoderFactoryInterface $encoderFactory)
+    public function __construct(EncoderFactoryInterface $factory)
     {
-        $this->encoderFactory = $encoderFactory;
+        $this->factory = $factory;
     }
 
     /**

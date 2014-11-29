@@ -25,6 +25,5 @@ services:
         class: %tom32i_simple_security.subscriber.kernel.voucher_trash.class%
         arguments:
             - @tom32i_simple_security.manager.voucher
-            - @?logger
         tags:
             - { name: kernel.event_subscriber }

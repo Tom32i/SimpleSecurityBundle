@@ -23,9 +23,7 @@ class PasswordController extends BaseController
 
         $form = $this->createForm('forgot_password', [], ['action' => $this->generateUrl('forgot_password')]);
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
 
             $user = $this->getUserManager()->getRepository()->findOneBy([
                 'email' => $form->getData(),
@@ -56,9 +54,7 @@ class PasswordController extends BaseController
             'current_password' => false,
         ]);
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
 
             $errors = $this->getUserManager()->setPassword($user, $user->getPlainPassword());
 

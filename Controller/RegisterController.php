@@ -25,9 +25,7 @@ class RegisterController extends BaseController
         $user = $this->getUserManager()->createUser();
         $form = $this->createForm('register', $user, ['action' => $this->generateUrl('register')]);
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
 
             $result = $this->getUserManager()->register($user);
 

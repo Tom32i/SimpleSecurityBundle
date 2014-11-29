@@ -39,7 +39,7 @@ abstract class BaseController extends Controller
      */
     protected function logUserIn(UserInterface $user)
     {
-        $token = $this->getUserManager()->getAuthenticationToken($user);
+        $token = $this->getAuthenticator()->getAuthenticationToken($user);
 
         $this->getSecurityContext()->setToken($token);
     }
@@ -63,6 +63,17 @@ abstract class BaseController extends Controller
     {
         return $this->get('tom32i_simple_security.manager.user');
     }
+
+    /**
+     * Get authenticator
+     *
+     * @return Authenticator
+     */
+    protected function getAuthenticator()
+    {
+        return $this->get('tom32i_simple_security.authenticator');
+    }
+
     /**
      * Get voucher manager
      *
