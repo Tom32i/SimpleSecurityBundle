@@ -275,7 +275,7 @@ abstract class User implements UserInterface
      */
     public function removeRole($role)
     {
-        $key = array_search($role, $roles);
+        $key = array_search($role, $this->roles);
 
         if ($key !== false) {
             unset($this->roles[$key]);
