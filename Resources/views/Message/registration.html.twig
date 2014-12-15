@@ -1,7 +1,10 @@
 {% extends "@Tom32iSimpleSecurity/Message/layout.html.twig" %}
 
+{% set title = 'registration.title'|trans({}, 'email') %}
+
 {% block content %}
     {{ 'registration.content'|trans({
         '%url%': url('register_validation', {token: token})
     }, 'email')|raw }}
 {% endblock %}
+

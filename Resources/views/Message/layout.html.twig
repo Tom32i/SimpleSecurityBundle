@@ -7,7 +7,7 @@
             <table cellpadding="0" cellspacing="0" border="0" align="center">
                 <tr>
                     <td width="600" valign="top" align="center">
-                        {{ 'email.title'|trans }}
+                        {% block title title|default('title'|trans({}, 'email')) %}
                     </td>
                 </tr>
             </table>
