@@ -19,11 +19,3 @@ services:
             - %tom32i_simple_security.parameters.user_class%
         tags:
             - { name: doctrine.event_subscriber, connection: default }
-
-    # Kernel Voucher Trash Subscriber
-    tom32i_simple_security.subscriber.kernel.voucher_trash:
-        class: %tom32i_simple_security.subscriber.kernel.voucher_trash.class%
-        arguments:
-            - @tom32i_simple_security.manager.voucher
-        tags:
-            - { name: kernel.event_subscriber }

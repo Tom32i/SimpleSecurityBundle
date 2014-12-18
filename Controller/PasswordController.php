@@ -61,6 +61,7 @@ class PasswordController extends BaseController
             if (count($errors) === 0) {
                 $this->logUserIn($user);
                 $this->getVoucherManager()->activate($voucher);
+                $this->getVoucherManager()->clearTrash();
 
                 return $this->redirectOnSuccess();
             }

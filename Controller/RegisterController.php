@@ -57,6 +57,7 @@ class RegisterController extends BaseController
 
         if (count($errors) === 0) {
             $this->logUserIn($user);
+            $this->getVoucherManager()->clearTrash();
 
             return $this->redirectOnSuccess();
         }
