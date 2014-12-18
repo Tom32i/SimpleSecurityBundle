@@ -72,6 +72,10 @@ class VoucherManager
      */
     public function clearTrash()
     {
+        if (empty($this->trash)) {
+            return $this;
+        }
+
         foreach ($this->trash as $voucher) {
             $this->objectManager->remove($voucher);
         }
