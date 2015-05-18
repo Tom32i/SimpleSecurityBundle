@@ -92,13 +92,23 @@ abstract class User implements UserInterface
     protected $enabled;
 
     /**
+     * Vouchers
+     *
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher", mappedBy="user", orphanRemoval=true)
+     */
+    protected $vouchers;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->enabled = false;
-        $this->roles   = [];
-        $this->salt    = static::generateToken();
+        $this->enabled  = false;
+        $this->roles    = [];
+        $this->salt     = static::generateToken();
+        $this->vouchers = new ArrayCollection();
     }
 
     /**
