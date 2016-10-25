@@ -21,7 +21,7 @@ class UserManager
     /**
      * Validator
      *
-     * @var Validator
+     * @var ValidatorInterface
      */
     protected $validator;
 

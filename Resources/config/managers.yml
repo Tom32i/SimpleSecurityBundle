@@ -6,27 +6,27 @@ parameters:
 services:
     # User manager
     tom32i_simple_security.manager.user:
-        class: %tom32i_simple_security.manager.user.class%
+        class: "%tom32i_simple_security.manager.user.class%"
         arguments:
-            - @doctrine.orm.entity_manager
-            - @validator
-            - @tom32i_simple_security.manager.voucher
-            - @tom32i_simple_security.manager.mail
-            - %tom32i_simple_security.parameters.user_class%
+            - "@doctrine.orm.entity_manager"
+            - "@validator"
+            - "@tom32i_simple_security.manager.voucher"
+            - "@tom32i_simple_security.manager.mail"
+            - "%tom32i_simple_security.parameters.user_class%"
 
     # Voucher manager
     tom32i_simple_security.manager.voucher:
-        class:  %tom32i_simple_security.manager.voucher.class%
+        class:  "%tom32i_simple_security.manager.voucher.class%"
         arguments:
-            - @doctrine.orm.entity_manager
-            - @validator
+            - "@doctrine.orm.entity_manager"
+            - "@validator"
 
     # Mail manager:
     tom32i_simple_security.manager.mail:
-        class:  %tom32i_simple_security.manager.mail.class%
+        class:  "%tom32i_simple_security.manager.mail.class%"
         arguments:
-            - @mailer
-            - @translator
-            - @templating
-            - @router
-            - %tom32i_simple_security.parameters.mailer_from%
+            - "@mailer"
+            - "@translator"
+            - "@templating"
+            - "@router"
+            - "%tom32i_simple_security.parameters.mailer_from%"

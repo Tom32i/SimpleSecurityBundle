@@ -2,12 +2,12 @@
 
 namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
@@ -40,8 +40,7 @@ abstract class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=50, unique=true)
-     * @Assert\Length(min=3, max=50, minMessage="user.username.invalid", maxMessage="user.username.invalid")
+     * @ORM\Column(name="username", type="string", length=255, unique=true)
      * @Assert\NotBlank(message="user.username.invalid")
      */
     protected $username;
@@ -50,7 +49,7 @@ abstract class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     * @Assert\Null(groups={"ChangePassword", "Registration"})
+     * @Assert\IsNull(groups={"ChangePassword", "Registration"})
      */
     protected $password;
 
@@ -59,7 +58,7 @@ abstract class User implements UserInterface
      *
      * @Assert\Length(
      *     min=5,
-     *     max=50,
+     *     max=255,
      *     minMessage="user.password.invalid",
      *     maxMessage="user.password.invalid",
      *     groups={"Registration", "ChangePassword"}
@@ -71,14 +70,13 @@ abstract class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="salt", type="string", length=32)
+     * @ORM\Column(name="salt", type="string", length=255)
      */
-    protected $salt;
+    //protected $salt;
 
     /**
      * @var array
      *
-     * @Assert\Count(min=1)
      * @ORM\Column(name="roles", type="simple_array")
      */
     protected $roles;
@@ -87,7 +85,7 @@ abstract class User implements UserInterface
      * @var boolean
      *
      * @ORM\Column(name="enabled", type="boolean")
-     * @Assert\False(groups={"Confirmation"})
+     * @Assert\IsFalse(groups={"Confirmation"})
      */
     protected $enabled;
 
@@ -96,7 +94,7 @@ abstract class User implements UserInterface
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher", mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher", mappedBy="user", orphanRemoval=true)
      */
     protected $vouchers;
 
@@ -229,12 +227,12 @@ abstract class User implements UserInterface
      *
      * @return User
      */
-    public function setSalt($salt)
+    /*public function setSalt($salt)
     {
         $this->salt = $salt;
 
         return $this;
-    }
+    }*/
 
     /**
      * Get salt
@@ -243,6 +241,7 @@ abstract class User implements UserInterface
      */
     public function getSalt()
     {
+        return null;
         return $this->salt;
     }
 
@@ -253,7 +252,7 @@ abstract class User implements UserInterface
      *
      * @return User
      */
-    public function setRoles($roles)
+    public function setRoles(array $roles)
     {
         $this->roles = $roles;
 
@@ -396,7 +395,9 @@ abstract class User implements UserInterface
      */
     public function equals(AdvancedUserInterface $user)
     {
-        return ($user->getId() === $this->getId()) || ($user->getEmail() === $this->getEmail()) || ($user->getUsername() === $this->getUsername());
+        return ($user->getId() === $this->getId())
+            || ($user->getEmail() === $this->getEmail())
+            || ($user->getUsername() === $this->getUsername());
     }
 
     /**

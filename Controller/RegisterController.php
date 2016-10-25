@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher;
+use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType;
 
 /**
  * Register Controller
@@ -20,14 +21,19 @@ class RegisterController extends BaseController
      */
     public function registerAction(Request $request)
     {
-        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+        if ($this->isLoggedIn()) {
+            return $this->redirectOnSuccess();
+        }
 
-        $user = $this->getUserManager()->createUser();
-        $form = $this->createForm('register', $user, ['action' => $this->generateUrl('register')]);
+        $form = $this->createForm(RegisterType::class, null, [
+            'data_class' => $this->getParameter('tom32i_simple_security.parameters.user_class'),
+        ]);
+        //$user = $this->getUserManager()->createUser();
+        //$form = $this->createForm('register', $user, ['action' => $this->generateUrl('register')]);
+        $form->handleRequest($request);
 
-        if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
-
-            $result = $this->getUserManager()->register($user);
+        if ($form->isValid()) {
+            $result = $this->getUserManager()->register($form->getData());
 
             if (count($result) === 0) {
                 return $this->render('Tom32iSimpleSecurityBundle:Register:confirmation.html.twig');
@@ -50,7 +56,9 @@ class RegisterController extends BaseController
      */
     public function validationAction(Voucher $voucher)
     {
-        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+        if ($this->isLoggedIn()) {
+            return $this->redirectOnSuccess();
+        }
 
         $user   = $this->getVoucherManager()->activate($voucher);
         $errors = $this->getUserManager()->validate($user);

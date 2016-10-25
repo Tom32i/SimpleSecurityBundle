@@ -50,7 +50,7 @@ class ClassMetadataSubscriber implements EventSubscriber
     }
 
     /**
-     * Overrid target entity
+     * Override target entity
      *
      * @param ClassMetadata $metadata
      * @param string $field

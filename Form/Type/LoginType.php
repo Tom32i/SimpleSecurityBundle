@@ -5,6 +5,7 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\Extension\Core\Type;
 
 /**
  * Login type
@@ -17,9 +18,11 @@ class LoginType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', 'text')
-            ->add('password', 'password')
-            ->add('remember_me', 'checkbox', ['required' => false]);
+            ->add('username', Type\TextType::class)
+            ->add('password', Type\PasswordType::class)
+            ->add('remember_me', Type\CheckboxType::class, ['required' => false])
+            ->add('submit', Type\SubmitType::class)
+        ;
     }
 
     /**
@@ -27,19 +30,6 @@ class LoginType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'method' => 'POST',
-                'submit' => true,
-            ]
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'login';
+        $resolver->setDefaults(['method' => 'POST']);
     }
 }

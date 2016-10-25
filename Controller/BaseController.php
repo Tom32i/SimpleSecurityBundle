@@ -41,7 +41,7 @@ abstract class BaseController extends Controller
     {
         $token = $this->getAuthenticator()->getAuthenticationToken($user);
 
-        $this->tokenStorage()->setToken($token);
+        $this->getTokenStorage()->setToken($token);
     }
 
     /**
