@@ -4,7 +4,8 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type;
 
 /**
  * Forgot Password type
@@ -16,20 +17,18 @@ class ForgotPasswordType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('email', 'text');
+        $builder->add('email', Type\TextType::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'method' => 'POST',
-                'submit' => true,
-            ]
-        );
+        $resolver->setDefaults([
+            'method' => 'POST',
+            'submit' => true,
+        ]);
     }
 
     /**
