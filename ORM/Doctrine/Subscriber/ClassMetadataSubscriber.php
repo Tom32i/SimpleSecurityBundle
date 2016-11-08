@@ -6,6 +6,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher;
 
 /**
  * Class Metadata Subscriber
@@ -44,7 +45,7 @@ class ClassMetadataSubscriber implements EventSubscriber
     {
         $metadata = $eventArgs->getClassMetadata();
 
-        if ('Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher' === $metadata->getName()) {
+        if (Voucher::class === $metadata->getName()) {
             $this->overrideTargetEntity($metadata, 'user', $this->userClassname);
         }
     }

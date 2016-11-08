@@ -57,11 +57,11 @@ class UserManager
      */
     public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherManager $voucherManager, MailManager $mailer, $userClassname)
     {
-        $this->objectManager  = $objectManager;
-        $this->validator      = $validator;
+        $this->objectManager = $objectManager;
+        $this->validator = $validator;
         $this->voucherManager = $voucherManager;
-        $this->mailer         = $mailer;
-        $this->userClassname  = $userClassname;
+        $this->mailer = $mailer;
+        $this->userClassname = $userClassname;
     }
 
     /**
@@ -98,14 +98,13 @@ class UserManager
         $errors = $this->validator->validate($user, null, ['Default', 'Registration', 'Confirmation']);
 
         if (count($errors) === 0) {
-
             $this->objectManager->persist($user);
-            $this->objectManager->flush();
+            $this->objectManager->flush($user);
 
             $voucher = $this->voucherManager->create($user, 'registration');
 
             $this->objectManager->persist($voucher);
-            $this->objectManager->flush();
+            $this->objectManager->flush($voucher);
 
             $this->mailer->sendRegistrationMessage($user, $voucher->getToken());
         }
@@ -128,7 +127,7 @@ class UserManager
 
         if (count($errors) === 0) {
             $this->objectManager->persist($user);
-            $this->objectManager->flush();
+            $this->objectManager->flush($user);
         }
 
         return $errors;
@@ -147,12 +146,12 @@ class UserManager
 
         if (count($errors) === 0) {
             $this->objectManager->persist($user);
-            $this->objectManager->flush();
+            $this->objectManager->flush($user);
 
             $voucher = $this->voucherManager->create($user, 'password');
 
             $this->objectManager->persist($voucher);
-            $this->objectManager->flush();
+            $this->objectManager->flush($voucher);
 
             $this->mailer->sendResetPasswordMessage($user, $voucher->getToken());
         }
@@ -175,7 +174,7 @@ class UserManager
 
         if (count($errors) === 0) {
             $this->objectManager->persist($user);
-            $this->objectManager->flush();
+            $this->objectManager->flush($user);
         }
 
         return $errors;

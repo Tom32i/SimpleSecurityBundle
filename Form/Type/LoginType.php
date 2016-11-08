@@ -30,6 +30,6 @@ class LoginType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['method' => 'POST']);
+        $resolver->setDefault('method' => 'POST');
     }
 }

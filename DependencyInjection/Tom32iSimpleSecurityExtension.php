@@ -32,7 +32,6 @@ class Tom32iSimpleSecurityExtension extends Extension
 
         if ($config['login']['enabled']) {
             $this->addRouting($container, 'login');
-            $loader->load('forms/login.yml');
 
             $container
                 ->getDefinition('tom32i_simple_security.authenticator')
@@ -41,12 +40,10 @@ class Tom32iSimpleSecurityExtension extends Extension
 
         if ($config['register']['enabled']) {
             $this->addRouting($container, 'register');
-            $loader->load('forms/register.yml');
         }
 
         if ($config['password']['enabled']) {
             $this->addRouting($container, 'password');
-            $loader->load('forms/password.yml');
         }
     }
 
@@ -76,8 +73,6 @@ class Tom32iSimpleSecurityExtension extends Extension
     {
         $container
             ->getDefinition('tom32i_simple_security.routing_loader')
-            ->addMethodCall('addResource', [
-                sprintf('@Tom32iSimpleSecurityBundle/Resources/config/routing/%s.yml', $name)
-            ]);
+            ->addMethodCall('addResource', [sprintf('@Tom32iSimpleSecurityBundle/Resources/config/routing/%s.yml', $name)]);
     }
 }

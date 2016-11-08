@@ -17,7 +17,10 @@ class ForgotPasswordType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('email', Type\TextType::class);
+        $builder
+            ->add('email', Type\TextType::class)
+            ->add('submit', Type\SubmitType::class)
+        ;
     }
 
     /**
@@ -25,10 +28,7 @@ class ForgotPasswordType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'method' => 'POST',
-            'submit' => true,
-        ]);
+        $resolver->setDefault('method', 'POST');
     }
 
     /**

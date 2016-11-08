@@ -35,8 +35,8 @@ class VoucherManager
     public function __construct(ObjectManager $objectManager, ValidatorInterface $validator)
     {
         $this->objectManager = $objectManager;
-        $this->validator     = $validator;
-        $this->trash         = [];
+        $this->validator = $validator;
+        $this->trash = [];
     }
 
     /**
@@ -113,6 +113,6 @@ class VoucherManager
      */
     public function getRepository()
     {
-        return $this->objectManager->getRepository('Tom32iSimpleSecurityBundle:Voucher');
+        return $this->objectManager->getRepository(Voucher::class);
     }
 }

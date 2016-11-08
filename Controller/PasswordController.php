@@ -19,12 +19,13 @@ class PasswordController extends BaseController
      */
     public function forgotAction(Request $request)
     {
-        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+        if ($this->isLoggedIn()) {
+            return $this->redirectOnSuccess();
+        }
 
         $form = $this->createForm('forgot_password', [], ['action' => $this->generateUrl('forgot_password')]);
 
         if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
-
             $user = $this->getUserManager()->getRepository()->findOneBy([
                 'email' => $form->getData(),
             ]);
@@ -46,16 +47,19 @@ class PasswordController extends BaseController
      */
     public function chooseAction(Request $request, Voucher $voucher)
     {
-        if ($this->isLoggedIn()) { return $this->redirectOnSuccess(); }
+        if ($this->isLoggedIn()) {
+            return $this->redirectOnSuccess();
+        }
 
         $user = $voucher->getUser();
         $form = $this->createForm('user_password', $user, [
-            'action'           => $this->generateUrl('choose_password', ['token' => $voucher->getToken()]),
+            #'action' => $this->generateUrl('choose_password', ['token' => $voucher->getToken()]),
             'current_password' => false,
         ]);
 
-        if ($form->handleRequest($request)->isSubmitted() && $form->isValid()) {
+        $form->handleRequest($request);
 
+        if ($form->isValid()) {
             $errors = $this->getUserManager()->setPassword($user, $user->getPlainPassword());
 
             if (count($errors) === 0) {

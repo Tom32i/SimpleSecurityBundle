@@ -68,13 +68,6 @@ abstract class User implements UserInterface
     protected $plainPassword;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="salt", type="string", length=255)
-     */
-    //protected $salt;
-
-    /**
      * @var array
      *
      * @ORM\Column(name="roles", type="simple_array")
@@ -103,9 +96,8 @@ abstract class User implements UserInterface
      */
     public function __construct()
     {
-        $this->enabled  = false;
-        $this->roles    = [];
-        $this->salt     = static::generateToken();
+        $this->roles = [];
+        $this->enabled = false;
         $this->vouchers = new ArrayCollection();
     }
 
@@ -204,7 +196,7 @@ abstract class User implements UserInterface
     {
         if ($plainPassword) {
             $this->plainPassword = $plainPassword;
-            $this->password      = null;
+            $this->password = null;
         }
 
         return $this;
@@ -218,31 +210,6 @@ abstract class User implements UserInterface
     public function getPlainPassword()
     {
         return $this->plainPassword;
-    }
-
-    /**
-     * Set salt
-     *
-     * @param string $salt
-     *
-     * @return User
-     */
-    /*public function setSalt($salt)
-    {
-        $this->salt = $salt;
-
-        return $this;
-    }*/
-
-    /**
-     * Get salt
-     *
-     * @return string
-     */
-    public function getSalt()
-    {
-        return null;
-        return $this->salt;
     }
 
     /**
@@ -395,9 +362,9 @@ abstract class User implements UserInterface
      */
     public function equals(AdvancedUserInterface $user)
     {
-        return ($user->getId() === $this->getId())
-            || ($user->getEmail() === $this->getEmail())
-            || ($user->getUsername() === $this->getUsername());
+        return $user->getId() === $this->getId()
+            || $user->getEmail() === $this->getEmail()
+            || $user->getUsername() === $this->getUsername();
     }
 
     /**
@@ -408,6 +375,14 @@ abstract class User implements UserInterface
         $this->plainPassword = null;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSalt()
+    {
+        return null;
     }
 
     /**
@@ -432,15 +407,5 @@ abstract class User implements UserInterface
     public function isCredentialsNonExpired()
     {
         return true;
-    }
-
-    /**
-     * Generate token
-     *
-     * @return string
-     */
-    public static function generateToken()
-    {
-        return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
     }
 }

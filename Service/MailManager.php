@@ -50,16 +50,22 @@ class MailManager
      */
     protected $root;
 
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, RouterInterface $router, $from = "")
+    /**
+     * Constructor
+     *
+     * @param Swift_Mailer $mailer
+     * @param TranslatorInterface $translator
+     * @param EngineInterface $templating
+     * @param RouterInterface $router
+     * @param string $from
+     */
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, RouterInterface $router, $from = '')
     {
-        $context = $router->getContext();
-        $root    = $context->getScheme() . '://' . $context->getHost();
-
-        $this->mailer     = $mailer;
+        $this->mailer = $mailer;
         $this->translator = $translator;
         $this->templating = $templating;
-        $this->from       = $from;
-        $this->root       = $root;
+        $this->from = $from;
+        $this->root = $router->getContext()->getScheme() . '://' . $router->getContext()->getHost();
     }
 
     /**
@@ -74,7 +80,7 @@ class MailManager
      *
      * @return Swift_Message
      */
-    protected function createMessage($title, $to, $template, $parameters = [], $from = null, $type = 'text/html')
+    protected function createMessage($title, $to, $template, array $parameters = [], $from = null, $type = 'text/html')
     {
         if ($from === null) {
             $from = $this->from;
@@ -97,12 +103,12 @@ class MailManager
     {
         $message = $this->createMessage(
             'registration.title',
-            [$user->getEmail() => $user->getUsername()],
+            [ $user->getEmail() => $user->getUsername() ],
             '@Tom32iSimpleSecurity/Message/registration.html.twig',
             [
-                'name'  => $user->getUsername(),
+                'name' => $user->getUsername(),
                 'token' => $token,
-                'root'  => $this->root,
+                'root' => $this->root,
             ]
         );
 
@@ -119,12 +125,12 @@ class MailManager
     {
         $message = $this->createMessage(
             'confirmation.title',
-            [$user->getEmail() => $user->getUsername()],
+            [ $user->getEmail() => $user->getUsername() ],
             '@Tom32iSimpleSecurity/Message/validation.html.twig',
             [
-                'name'  => $user->getUsername(),
+                'name' => $user->getUsername(),
                 'token' => $token,
-                'root'  => $this->root,
+                'root' => $this->root,
             ]
         );
 
@@ -141,12 +147,12 @@ class MailManager
     {
         $message = $this->createMessage(
             'reset_password.title',
-            [$user->getEmail() => $user->getUsername()],
+            [ $user->getEmail() => $user->getUsername() ],
             '@Tom32iSimpleSecurity/Message/reset_password.html.twig',
             [
-                'name'  => $user->getUsername(),
+                'name' => $user->getUsername(),
                 'token' => $token,
-                'root'  => $this->root,
+                'root' => $this->root,
             ]
         );
 

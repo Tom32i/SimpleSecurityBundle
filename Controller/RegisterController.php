@@ -28,18 +28,17 @@ class RegisterController extends BaseController
         $form = $this->createForm(RegisterType::class, null, [
             'data_class' => $this->getParameter('tom32i_simple_security.parameters.user_class'),
         ]);
-        //$user = $this->getUserManager()->createUser();
-        //$form = $this->createForm('register', $user, ['action' => $this->generateUrl('register')]);
+
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $result = $this->getUserManager()->register($form->getData());
+            $errors = $this->getUserManager()->register($form->getData());
 
-            if (count($result) === 0) {
+            if (count($errors) === 0) {
                 return $this->render('Tom32iSimpleSecurityBundle:Register:confirmation.html.twig');
             }
 
-            foreach ($result as $error) {
+            foreach ($errors as $error) {
                 $form->addError(
                     new FormError($error->getMessage(), 'form.register.error', ['message' => $error->getMessage()])
                 );
@@ -60,7 +59,7 @@ class RegisterController extends BaseController
             return $this->redirectOnSuccess();
         }
 
-        $user   = $this->getVoucherManager()->activate($voucher);
+        $user = $this->getVoucherManager()->activate($voucher);
         $errors = $this->getUserManager()->validate($user);
 
         if (count($errors) === 0) {

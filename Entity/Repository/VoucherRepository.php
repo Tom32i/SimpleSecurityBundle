@@ -21,18 +21,11 @@ class VoucherRepository extends EntityRepository
      */
     public function findNonExpiredByToken($token)
     {
-        var_dump("findNonExpiredByToken", $token);
-        die();
-
-        return $this
-            ->createQueryBuilder('voucher')
-
+        return $this->createQueryBuilder('voucher')
             ->where('voucher.token <= :token')
-            ->setParameter('token', $token)
-
             ->andWhere('voucher.expiration > :date')
-            ->setParameter('date', new DateTime)
-
+            ->setParameter('token', $token)
+            ->setParameter('date', new DateTime())
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -46,12 +39,9 @@ class VoucherRepository extends EntityRepository
      */
     public function findAllExpired()
     {
-        return $this
-            ->createQueryBuilder('voucher')
-
+        return $this->createQueryBuilder('voucher')
             ->where('voucher.expiration <= :date')
-            ->setParameter('date', new DateTime)
-
+            ->setParameter('date', new DateTime())
             ->getQuery()
             ->getResult();
     }

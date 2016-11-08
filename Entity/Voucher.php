@@ -68,10 +68,10 @@ class Voucher implements VoucherInterface
      */
     public function __construct(UserInterface $user, $type, $ttl = '+ 5 minutes')
     {
-        $this->user       = $user;
-        $this->type       = $type;
+        $this->user = $user;
+        $this->type = $type;
         $this->expiration = new DateTime($ttl);
-        $this->token      = static::generateToken();
+        $this->token = static::generateToken();
     }
 
     /**
@@ -111,7 +111,7 @@ class Voucher implements VoucherInterface
      */
     public function isExpired($date = null)
     {
-        return $date ?: new DateTime < $this->expiration;
+        return ($date ?: new DateTime()) < $this->expiration;
     }
 
     /**
@@ -121,6 +121,6 @@ class Voucher implements VoucherInterface
      */
     public static function generateToken()
     {
-        return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
+        return md5(random_bytes(10));
     }
 }

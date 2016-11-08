@@ -1,7 +1,0 @@
-services:
-    tom32i_simple_security.form.register:
-        class:  Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType
-        arguments:
-            - "%tom32i_simple_security.parameters.user_class%"
-        tags:
-            - { name: form.type, alias: register }

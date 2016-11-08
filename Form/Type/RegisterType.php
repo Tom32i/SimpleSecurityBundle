@@ -41,11 +41,9 @@ class RegisterType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            //'data_class'         => $this->userClassname,
-            //'cascade_validation' => true,
-            'method'            => 'POST',
+            'method' => 'POST',
             'validation_groups' => ['Default', 'Registration'],
-            'empty_data'        => function (Options $options) {
+            'empty_data' => function (Options $options) {
                 return new $options['data_class']();
             },
         ]);

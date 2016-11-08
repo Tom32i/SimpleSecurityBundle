@@ -76,9 +76,7 @@ class Authenticator
             $encoder  = $this->factory->getEncoder($user);
             $password = $encoder->encodePassword($plain, $user->getSalt());
 
-            $user
-                ->setPassword($password)
-                ->eraseCredentials();
+            $user->setPassword($password)->eraseCredentials();
         }
     }
 }
