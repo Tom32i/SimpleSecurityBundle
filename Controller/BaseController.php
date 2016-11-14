@@ -27,9 +27,9 @@ abstract class BaseController extends Controller
      */
     protected function redirectOnSuccess()
     {
-        $route = $this->container->getParameter('tom32i_simple_security.parameters.redirect_after_authentication');
+        $route = $this->getSuccessRoute();
 
-        return $this->redirect($this->generateUrl($route['name'], $route['parameters'] ?: []));
+        return $this->redirecttoRoute($route['name'], $route['parameters'] ?: []);
     }
 
     /**
@@ -37,11 +37,21 @@ abstract class BaseController extends Controller
      *
      * @param User $user The user to impersonate
      */
-    protected function logUserIn(UserInterface $user)
+    /*protected function logUserIn(UserInterface $user)
     {
         $token = $this->getAuthenticator()->getAuthenticationToken($user);
 
         $this->getTokenStorage()->setToken($token);
+    }*/
+
+    /**
+     * Get success route
+     *
+     * @return strng
+     */
+    protected function getSuccessRoute()
+    {
+        return $this->container->getParameter('tom32i_simple_security.parameters.redirect_after_authentication');
     }
 
     /**
@@ -59,10 +69,10 @@ abstract class BaseController extends Controller
      *
      * @return TokenStorage
      */
-    protected function getTokenStorage()
+    /*protected function getTokenStorage()
     {
         return $this->get('security.token_storage');
-    }
+    }*/
 
     /**
      * Get user manager
@@ -79,10 +89,10 @@ abstract class BaseController extends Controller
      *
      * @return Authenticator
      */
-    protected function getAuthenticator()
+    /*protected function getAuthenticator()
     {
         return $this->get('tom32i_simple_security.authenticator');
-    }
+    }*/
 
     /**
      * Get voucher manager
