@@ -2,7 +2,6 @@
 
 namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
@@ -13,7 +12,7 @@ use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 /**
  * User
  *
- * @ORM\MappedSuperclass
+ * @ORM\MappedSuperclass()
  * @UniqueEntity(fields="email", message="user.email.used")
  * @UniqueEntity(fields="username", message="user.username.used")
  */
@@ -22,8 +21,8 @@ abstract class User implements UserInterface
     /**
      * @var integer
      *
-     * @ORM\Id
      * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -48,24 +47,10 @@ abstract class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     * @Assert\IsNull(groups={"ChangePassword", "Registration"})
+     * @ORM\Column(name="password", type="string", length=64, nullable=true)
+     * @Assert\NotBlank(message="user.password.invalid")
      */
     protected $password;
-
-    /**
-     * @var string
-     *
-     * @Assert\Length(
-     *     min=5,
-     *     max=255,
-     *     minMessage="user.password.invalid",
-     *     maxMessage="user.password.invalid",
-     *     groups={"Registration", "ChangePassword"}
-     * )
-     * @Assert\NotBlank(message="user.password.invalid", groups={"Registration", "ChangePassword"})
-     */
-    protected $plainPassword;
 
     /**
      * @var array
@@ -83,22 +68,14 @@ abstract class User implements UserInterface
     protected $enabled;
 
     /**
-     * Vouchers
-     *
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="\Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher", mappedBy="user", orphanRemoval=true)
-     */
-    protected $vouchers;
-
-    /**
      * Constructor
+     *
+     * @param array $roles Roles
      */
-    public function __construct()
+    public function __construct(array $roles = [])
     {
-        $this->roles = [];
+        $this->roles = $roles;
         $this->enabled = false;
-        $this->vouchers = new ArrayCollection();
     }
 
     /**
@@ -183,33 +160,6 @@ abstract class User implements UserInterface
     public function getPassword()
     {
         return $this->password;
-    }
-
-    /**
-     * Set plainPassword
-     *
-     * @param string $plainPassword
-     *
-     * @return User
-     */
-    public function setPlainPassword($plainPassword)
-    {
-        if ($plainPassword) {
-            $this->plainPassword = $plainPassword;
-            $this->password = null;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get plainPassword
-     *
-     * @return string
-     */
-    public function getPlainPassword()
-    {
-        return $this->plainPassword;
     }
 
     /**
@@ -372,8 +322,6 @@ abstract class User implements UserInterface
      */
     public function eraseCredentials()
     {
-        $this->plainPassword = null;
-
         return $this;
     }
 

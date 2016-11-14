@@ -17,7 +17,7 @@ abstract class BaseController extends Controller
      */
     protected function isLoggedIn()
     {
-        return $this->getAuthorizationChecker()->isGranted('IS_AUTHENTICATED_REMEMBERED');
+        return $this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED');
     }
 
     /**
@@ -29,7 +29,7 @@ abstract class BaseController extends Controller
     {
         $route = $this->getSuccessRoute();
 
-        return $this->redirecttoRoute($route['name'], $route['parameters'] ?: []);
+        return $this->redirectToRoute($route['name'], $route['parameters'] ?: []);
     }
 
     /**
@@ -45,26 +45,6 @@ abstract class BaseController extends Controller
     }*/
 
     /**
-     * Get success route
-     *
-     * @return strng
-     */
-    protected function getSuccessRoute()
-    {
-        return $this->container->getParameter('tom32i_simple_security.parameters.redirect_after_authentication');
-    }
-
-    /**
-     * Get authorization checker
-     *
-     * @return AuthorizationCheckerInterface
-     */
-    protected function getAuthorizationChecker()
-    {
-        return $this->get('security.authorization_checker');
-    }
-
-    /**
      * Get token storage
      *
      * @return TokenStorage
@@ -75,16 +55,6 @@ abstract class BaseController extends Controller
     }*/
 
     /**
-     * Get user manager
-     *
-     * @return UserManager
-     */
-    protected function getUserManager()
-    {
-        return $this->get('tom32i_simple_security.manager.user');
-    }
-
-    /**
      * Get authenticator
      *
      * @return Authenticator
@@ -93,14 +63,4 @@ abstract class BaseController extends Controller
     {
         return $this->get('tom32i_simple_security.authenticator');
     }*/
-
-    /**
-     * Get voucher manager
-     *
-     * @return VoucherManager
-     */
-    protected function getVoucherManager()
-    {
-        return $this->get('tom32i_simple_security.manager.voucher');
-    }
 }

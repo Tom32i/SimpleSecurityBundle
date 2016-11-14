@@ -10,16 +10,9 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@validator"
-            - "@tom32i_simple_security.manager.voucher"
+            - "@security.authentication.provider.voucher"
             - "@tom32i_simple_security.manager.mail"
             - "%tom32i_simple_security.parameters.user_class%"
-
-    # Voucher manager
-    tom32i_simple_security.manager.voucher:
-        class:  "%tom32i_simple_security.manager.voucher.class%"
-        arguments:
-            - "@doctrine.orm.entity_manager"
-            - "@validator"
 
     # Mail manager:
     tom32i_simple_security.manager.mail:

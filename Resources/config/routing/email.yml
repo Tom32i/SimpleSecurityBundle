@@ -1,3 +1,0 @@
-email:
-    resource: "@Tom32iSimpleSecurityBundle/Controller/EmailController.php"
-    type:     annotation

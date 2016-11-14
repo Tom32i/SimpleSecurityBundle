@@ -11,11 +11,3 @@ services:
             - "@tom32i_simple_security.authenticator"
         tags:
             - { name: doctrine.event_subscriber, connection: default }
-
-    # Doctrine Class Metadata Subscriber
-    tom32i_simple_security.subscriber.doctrine.class_metadata:
-        class: "%tom32i_simple_security.subscriber.doctrine.class_metadata.class%"
-        arguments:
-            - "%tom32i_simple_security.parameters.user_class%"
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }

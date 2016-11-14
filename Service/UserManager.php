@@ -3,6 +3,8 @@
 namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Elao\Bundle\VoucherAuthenticationBundle\Behavior\VoucherProviderInterface;
+use Elao\Bundle\VoucherAuthenticationBundle\Voucher\Voucher;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
@@ -28,9 +30,9 @@ class UserManager
     /**
      * Voucher manager
      *
-     * @var VoucherManager
+     * @var VoucherProviderInterface
      */
-    protected $voucherManager;
+    protected $voucherProvider;
 
     /**
      * Mail manager
@@ -51,15 +53,15 @@ class UserManager
      *
      * @param ObjectManager $objectManager
      * @param ValidatorInterface $validator
-     * @param VoucherManager $voucherManager
+     * @param VoucherProviderInterface $voucherProvider
      * @param MailManager $mailer
      * @param string $userClassname
      */
-    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherManager $voucherManager, MailManager $mailer, $userClassname)
+    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherProviderInterface $voucherProvider, MailManager $mailer, $userClassname)
     {
         $this->objectManager = $objectManager;
         $this->validator = $validator;
-        $this->voucherManager = $voucherManager;
+        $this->voucherProvider = $voucherProvider;
         $this->mailer = $mailer;
         $this->userClassname = $userClassname;
     }
@@ -101,10 +103,8 @@ class UserManager
             $this->objectManager->persist($user);
             $this->objectManager->flush($user);
 
-            $voucher = $this->voucherManager->create($user, 'registration');
-
-            $this->objectManager->persist($voucher);
-            $this->objectManager->flush($voucher);
+            $voucher = new Voucher($user->getUsername(), 'register');
+            $this->voucherManager->presist($voucher);
 
             $this->mailer->sendRegistrationMessage($user, $voucher->getToken());
         }
@@ -148,10 +148,8 @@ class UserManager
             $this->objectManager->persist($user);
             $this->objectManager->flush($user);
 
-            $voucher = $this->voucherManager->create($user, 'password');
-
-            $this->objectManager->persist($voucher);
-            $this->objectManager->flush($voucher);
+            $voucher = new Voucher($user->getUsername(), 'password');
+            $this->voucherManager->presist($voucher);
 
             $this->mailer->sendResetPasswordMessage($user, $voucher->getToken());
         }

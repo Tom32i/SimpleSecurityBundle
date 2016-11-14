@@ -29,22 +29,6 @@ class Tom32iSimpleSecurityExtension extends Extension
         $loader->load('subscribers.yml');
 
         $this->setParameters($container, $config, ['user_class', 'mailer_from', 'redirect_after_authentication']);
-
-        if ($config['login']['enabled']) {
-            $this->addRouting($container, 'login');
-
-            $container
-                ->getDefinition('tom32i_simple_security.authenticator')
-                ->addMethodCall('setFirewall', [$config['login']['firewall']]);
-        }
-
-        if ($config['register']['enabled']) {
-            $this->addRouting($container, 'register');
-        }
-
-        if ($config['password']['enabled']) {
-            $this->addRouting($container, 'password');
-        }
     }
 
     /**
@@ -61,18 +45,5 @@ class Tom32iSimpleSecurityExtension extends Extension
         foreach ($parameters as $key => $value) {
             $container->setParameter(sprintf('tom32i_simple_security.parameters.%s', $key), $value);
         }
-    }
-
-    /**
-     * Add routing configuration
-     *
-     * @param ContainerBuilder $container
-     * @param string $name
-     */
-    private function addRouting(ContainerBuilder $container, $name)
-    {
-        $container
-            ->getDefinition('tom32i_simple_security.routing_loader')
-            ->addMethodCall('addResource', [sprintf('@Tom32iSimpleSecurityBundle/Resources/config/routing/%s.yml', $name)]);
     }
 }

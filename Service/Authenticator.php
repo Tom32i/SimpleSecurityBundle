@@ -37,33 +37,6 @@ class Authenticator
     }
 
     /**
-     * Set firewall
-     *
-     * @param string $firewall
-     */
-    public function setFirewall($firewall)
-    {
-        $this->firewall = $firewall;
-    }
-
-    /**
-     * Get authentication token for a given user
-     *
-     * @param UserInterface $user
-     *
-     * @return UsernamePasswordToken
-     */
-    public function getAuthenticationToken(UserInterface $user)
-    {
-        return new UsernamePasswordToken(
-            $user,
-            $user->getPassword(),
-            $this->firewall,
-            $user->getRoles()
-        );
-    }
-
-    /**
      * Encode User password
      *
      * @param SafePasswordInterface $user The User

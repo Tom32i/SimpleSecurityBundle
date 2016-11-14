@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 /**
  * User interface
  */
-interface UserInterface extends AdvancedUserInterface, SafePasswordInterface, Serializable
+interface UserInterface extends AdvancedUserInterface, Serializable
 {
     /**
      * Get email
@@ -33,5 +33,5 @@ interface UserInterface extends AdvancedUserInterface, SafePasswordInterface, Se
      *
      * @return UserInterface
      */
-    public function setEnabled($enabled);
+    public function setEnabled($enabled = true);
 }
