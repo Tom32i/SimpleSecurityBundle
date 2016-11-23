@@ -23,13 +23,6 @@ class RegisterType extends AbstractType
             ->add('email', Type\EmailType::class)
             ->add('plainPassword', Type\RepeatedType::class, [
                 'type' => Type\PasswordType::class,
-                /*'first_options'  => [
-                    'label' => 'Mot de passe',
-                ],
-                'second_options' => [
-                    'label' => 'Confirmation de mot de passe',
-                ],
-                'invalid_message' => 'user.password.mismatch',*/
             ])
             ->add('submit', Type\SubmitType::class)
         ;
@@ -40,6 +33,8 @@ class RegisterType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setRequired('data_class');
+
         $resolver->setDefaults([
             'method' => 'POST',
             'validation_groups' => ['Default', 'Registration'],

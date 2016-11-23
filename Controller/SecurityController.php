@@ -4,8 +4,11 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\LoginType;
 use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType;
+use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ValidateRegistrationVoucher;
 
 /**
  * Security Controller
@@ -75,7 +78,7 @@ class SecurityController extends Controller
             $errors = $this->getUserManager()->register($form->getData());
 
             if (count($errors) === 0) {
-                return $this->render('Tom32iSimpleSecurityBundle:Security:confirmation.html.twig');
+                return $this->render('Tom32iSimpleSecurityBundle:Security:registered.html.twig');
             }
 
             foreach ($errors as $error) {
@@ -92,15 +95,34 @@ class SecurityController extends Controller
     }
 
     /**
+     * Validate the registration of the user
+     *
+     * @return Response
+     */
+    public function validateRegistrationAction()
+    {
+        $this->denyAccessUnlessGranted('voucher', ValidateRegistrationVoucher::INTENT);
+
+        $errors = $this->getUserManager()->validate($this->getUser());
+
+        if (count($errors) === 0) {
+            return $this->redirectOnSuccess();
+        }
+
+        return $this->render(
+            'Tom32iSimpleSecurityBundle:Security:validate_registration.html.twig',
+            ['errors' => $errors]
+        );
+    }
+
+    /**
      * Is logged in
      *
      * @return boolean
      */
     protected function isLoggedIn()
     {
-        return $this
-            ->get('security.authorization_checker')
-            ->isGranted('IS_AUTHENTICATED_REMEMBERED');
+        return $this->isGranted(AuthenticatedVoter::IS_AUTHENTICATED_REMEMBERED);
     }
 
     /**

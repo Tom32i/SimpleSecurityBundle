@@ -4,7 +4,9 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Elao\Bundle\VoucherAuthenticationBundle\Behavior\VoucherProviderInterface;
-use Elao\Bundle\VoucherAuthenticationBundle\Voucher\Voucher;
+use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ValidateRegistrationVoucher;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
@@ -46,34 +48,35 @@ class UserManager
      *
      * @var string
      */
-    protected $userClassname;
+    //protected $userClassname;
 
     /**
      * Constructor
      *
      * @param ObjectManager $objectManager
      * @param ValidatorInterface $validator
+     * @param UrlGeneratorInterface $router
+     * @param UserPasswordEncoderInterface $passwordEncoder
      * @param VoucherProviderInterface $voucherProvider
      * @param MailManager $mailer
      * @param string $userClassname
      */
-    public function __construct(ObjectManager $objectManager, ValidatorInterface $validator, VoucherProviderInterface $voucherProvider, MailManager $mailer, $userClassname)
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        ValidatorInterface $validator,
+        UrlGeneratorInterface $router,
+        UserPasswordEncoderInterface $passwordEncoder,
+        VoucherProviderInterface $voucherProvider,
+        MailManager $mailer
+        //$userClassname
+    ) {
         $this->objectManager = $objectManager;
         $this->validator = $validator;
+        $this->router = $router;
+        $this->passwordEncoder = $passwordEncoder;
         $this->voucherProvider = $voucherProvider;
         $this->mailer = $mailer;
-        $this->userClassname = $userClassname;
-    }
-
-    /**
-     * Create User
-     *
-     * @return User
-     */
-    public function createUser()
-    {
-        return new $this->userClassname;
+        //$this->userClassname = $userClassname;
     }
 
     /**
@@ -81,10 +84,10 @@ class UserManager
      *
      * @return ObjectRepository
      */
-    public function getRepository()
+    /*public function getRepository()
     {
         return $this->objectManager->getRepository($this->userClassname);
-    }
+    }*/
 
     /**
      * Register an user
@@ -99,15 +102,28 @@ class UserManager
 
         $errors = $this->validator->validate($user, null, ['Default', 'Registration', 'Confirmation']);
 
-        if (count($errors) === 0) {
-            $this->objectManager->persist($user);
-            $this->objectManager->flush($user);
-
-            $voucher = new Voucher($user->getUsername(), 'register');
-            $this->voucherManager->presist($voucher);
-
-            $this->mailer->sendRegistrationMessage($user, $voucher->getToken());
+        if (count($errors) > 0) {
+            return $errors;
         }
+
+        $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+
+        $user->setPassword($password);
+
+        $this->objectManager->persist($user);
+        $this->objectManager->flush($user);
+
+        $voucher = new ValidateRegistrationVoucher($user->getUsername());
+
+        $this->voucherProvider->persist($voucher);
+
+        $validateUrl = $this->router->generate(
+            'voucher',
+            ['token' => $voucher->getToken()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $this->mailer->sendRegistrationMessage($user, $validateUrl);
 
         return $errors;
     }
@@ -125,10 +141,12 @@ class UserManager
 
         $errors = $this->validator->validate($user);
 
-        if (count($errors) === 0) {
-            $this->objectManager->persist($user);
-            $this->objectManager->flush($user);
+        if (count($errors) > 0) {
+            return $errors;
         }
+
+        $this->objectManager->persist($user);
+        $this->objectManager->flush($user);
 
         return $errors;
     }

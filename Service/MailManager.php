@@ -7,7 +7,6 @@ use Swift_Message;
 use Swift_SwiftException;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
@@ -48,7 +47,7 @@ class MailManager
      *
      * @var string
      */
-    protected $root;
+    //protected $root;
 
     /**
      * Constructor
@@ -56,16 +55,15 @@ class MailManager
      * @param Swift_Mailer $mailer
      * @param TranslatorInterface $translator
      * @param EngineInterface $templating
-     * @param RouterInterface $router
      * @param string $from
      */
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, RouterInterface $router, $from = '')
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, $from = '')
     {
         $this->mailer = $mailer;
         $this->translator = $translator;
         $this->templating = $templating;
         $this->from = $from;
-        $this->root = $router->getContext()->getScheme() . '://' . $router->getContext()->getHost();
+        //$this->root = $router->getContext()->getScheme() . '://' . $router->getContext()->getHost();
     }
 
     /**
@@ -97,9 +95,9 @@ class MailManager
      * Send an email to the user to confirm its email address after registration
      *
      * @param UserInterface $user The user to send the email to
-     * @param string $token The token
+     * @param string $url The validation url
      */
-    public function sendRegistrationMessage(UserInterface $user, $token)
+    public function sendRegistrationMessage(UserInterface $user, $url)
     {
         $message = $this->createMessage(
             'registration.title',
@@ -107,8 +105,8 @@ class MailManager
             '@Tom32iSimpleSecurity/Message/registration.html.twig',
             [
                 'name' => $user->getUsername(),
-                'token' => $token,
-                'root' => $this->root,
+                'url' => $url,
+                //'root' => $this->root,
             ]
         );
 
@@ -130,7 +128,6 @@ class MailManager
             [
                 'name' => $user->getUsername(),
                 'token' => $token,
-                'root' => $this->root,
             ]
         );
 

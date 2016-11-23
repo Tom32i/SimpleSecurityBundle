@@ -20,7 +20,7 @@ form:
                     first:
                         label:  Mot de passe
                     second:
-                        label:  Confirmation
+                        label:  Confirmation du mot de passe
             submit:
                 label:          M'inscrire
     forgot_password:

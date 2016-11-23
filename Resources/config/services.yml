@@ -1,10 +1,21 @@
-parameters:
-    tom32i_simple_security.routing_loader.class: Tom32i\Bundle\SimpleSecurityBundle\Routing\SecurityLoader
-    tom32i_simple_security.authenticator.class:  Tom32i\Bundle\SimpleSecurityBundle\Service\Authenticator
-
 services:
-    # Authenticator
-    tom32i_simple_security.authenticator:
-        class: "%tom32i_simple_security.authenticator.class%"
+    # User manager
+    tom32i_simple_security.manager.user:
+        class: Tom32i\Bundle\SimpleSecurityBundle\Service\UserManager
         arguments:
-            - "@security.encoder_factory"
+            - "@doctrine.orm.entity_manager"
+            - "@validator"
+            - "@router"
+            - "@security.password_encoder"
+            - "@elao_voucher_authentication.voucher_provider.default"
+            - "@tom32i_simple_security.manager.mail"
+            #- "%tom32i_simple_security.parameters.user_class%"
+
+    # Mail manager:
+    tom32i_simple_security.manager.mail:
+        class:  Tom32i\Bundle\SimpleSecurityBundle\Service\MailManager
+        arguments:
+            - "@mailer"
+            - "@translator"
+            - "@templating"
+            - "%tom32i_simple_security.parameters.mailer_from%"

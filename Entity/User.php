@@ -32,7 +32,6 @@ abstract class User implements UserInterface
      *
      * @ORM\Column(name="email", type="string", length=60, unique=true)
      * @Assert\Email(message="user.email.invalid")
-     * @Assert\NotBlank(message="user.email.invalid")
      */
     protected $email;
 
@@ -48,7 +47,6 @@ abstract class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=64, nullable=true)
-     * @Assert\NotBlank(message="user.password.invalid")
      */
     protected $password;
 
@@ -66,6 +64,15 @@ abstract class User implements UserInterface
      * @Assert\IsFalse(groups={"Confirmation"})
      */
     protected $enabled;
+
+    /**
+     * Plain password
+     *
+     * @Assert\NotBlank(message="user.password.invalid", groups={"Registration", "ChangePassword"})
+     *
+     * @var string
+     */
+    protected $plainPassword;
 
     /**
      * Constructor
@@ -93,7 +100,7 @@ abstract class User implements UserInterface
      */
     public function serialize()
     {
-        return serialize([$this->id, $this->username, $this->email]);
+        return serialize([$this->id, $this->username, $this->email, $this->password, $this->enabled]);
     }
 
     /**
@@ -101,7 +108,7 @@ abstract class User implements UserInterface
      */
     public function unserialize($serialized)
     {
-        list($this->id, $this->username, $this->email) = unserialize($serialized);
+        list($this->id, $this->username, $this->email, $this->password, $this->enabled) = unserialize($serialized);
     }
 
     /**
@@ -148,6 +155,7 @@ abstract class User implements UserInterface
     public function setPassword($password)
     {
         $this->password = $password;
+        $this->plainPassword = null;
 
         return $this;
     }
@@ -160,6 +168,31 @@ abstract class User implements UserInterface
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set plain password
+     *
+     * @param string $plainPassword
+     *
+     * @return User
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
+        $this->password = null;
+
+        return $this;
+    }
+
+    /**
+     * Get plain plainPassword
+     *
+     * @return string
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
     }
 
     /**
@@ -310,18 +343,10 @@ abstract class User implements UserInterface
     /**
      * {@inheritdoc}
      */
-    public function equals(AdvancedUserInterface $user)
-    {
-        return $user->getId() === $this->getId()
-            || $user->getEmail() === $this->getEmail()
-            || $user->getUsername() === $this->getUsername();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function eraseCredentials()
     {
+        $this->plainPassword = null;
+
         return $this;
     }
 

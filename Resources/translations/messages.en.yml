@@ -20,7 +20,7 @@ form:
                     first:
                         label:  Password
                     second:
-                        label:  Confirmation
+                        label:  Password confirmation
             submit:
                 label:          Register
     forgot_password:

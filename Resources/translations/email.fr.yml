@@ -5,7 +5,7 @@ registration:
     title:      Confirmation de votre adresse email
     content:    |
                 <p>Votre inscription est presque terminée</p>
-                <p>Veuillez cliquer sur le lien ci-dessous afin de valider cette inscription :</p>
+                <p>Veuillez cliquer sur le lien ci-dessous afin de valider votre inscription :</p>
                 <a href="%url%">%url%</a>
 
 reset_password:

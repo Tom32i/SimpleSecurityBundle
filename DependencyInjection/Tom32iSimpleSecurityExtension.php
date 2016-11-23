@@ -25,8 +25,6 @@ class Tom32iSimpleSecurityExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $loader->load('services.yml');
-        $loader->load('managers.yml');
-        $loader->load('subscribers.yml');
 
         $this->setParameters($container, $config, ['user_class', 'mailer_from', 'redirect_after_authentication']);
     }
