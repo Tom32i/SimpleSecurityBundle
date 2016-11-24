@@ -60,7 +60,7 @@ register:
 forgot_password_confirmation:
     title:      Your password has been reset
     content:    |
-                <p>An email has just been sent to you, it'll allow you to choose a new password.</p>
+                <p>An email has just been sent to "%email%", it'll allow you to choose a new password.</p>
     link:
         login:  Sign in
 

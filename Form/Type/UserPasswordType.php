@@ -18,10 +18,16 @@ class UserPasswordType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('plainPassword', Type\RepeatedType::class, ['type' => Type\PasswordType::class]);
+        $builder
+            ->add('plainPassword', Type\RepeatedType::class, [
+                'type' => Type\PasswordType::class,
+            ]);
 
         if ($options['current_password']) {
-            $builder->add('password', Type\PasswordType::class, ['constraints' => [new UserPassword()]]);
+            $builder->add('password', Type\PasswordType::class, [
+                'constraints' => [new UserPassword()],
+                'mapped' => false,
+            ]);
         }
 
         $builder->add('submit', Type\SubmitType::class);
@@ -35,7 +41,6 @@ class UserPasswordType extends AbstractType
         $resolver->setDefaults([
             'method' => 'POST',
             'validation_groups' => ['ChangePassword'],
-            #'cascade_validation' => true,
             'current_password' => true,
         ]);
     }

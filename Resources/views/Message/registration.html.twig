@@ -3,6 +3,6 @@
 {% set title = 'registration.title'|trans({}, 'email') %}
 
 {% block content %}
-    {{ 'registration.content'|trans({'%url%': url}, 'email')|raw }}
+    {{ 'registration.content'|trans({ '%url%': url }, 'email')|raw }}
 {% endblock %}
 

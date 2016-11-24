@@ -6,8 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
+use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\ForgotPasswordType;
 use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\LoginType;
 use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\RegisterType;
+use Tom32i\Bundle\SimpleSecurityBundle\Form\Type\UserPasswordType;
+use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ResetPasswordVoucher;
 use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ValidateRegistrationVoucher;
 
 /**
@@ -112,6 +115,69 @@ class SecurityController extends Controller
         return $this->render(
             'Tom32iSimpleSecurityBundle:Security:validate_registration.html.twig',
             ['errors' => $errors]
+        );
+    }
+
+    /**
+     * Forgot password
+     *
+     * @return Response
+     */
+    public function forgotPasswordAction(Request $request)
+    {
+        if ($this->isLoggedIn()) {
+            return $this->redirectOnSuccess();
+        }
+
+        $form = $this->createForm(ForgotPasswordType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $email = $form->getData()['email'];
+            $classname = $this->getParameter('tom32i_simple_security.parameters.user_class');
+            $user = $this->getDoctrine()->getRepository($classname)->loadUserByUsername($email);
+
+            if ($user) {
+                $this->getUserManager()->resetPassword($user);
+            }
+
+            return $this->render('Tom32iSimpleSecurityBundle:Security:password_confirmation.html.twig', ['email' => $email]);
+        }
+
+        return $this->render(
+            'Tom32iSimpleSecurityBundle:Security:forgot_password.html.twig',
+            ['form' => $form->createView()]
+        );
+    }
+
+    /**
+     * Reset password action
+     *
+     * @param Request $request
+     */
+    public function resetPasswordAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('voucher', ResetPasswordVoucher::INTENT);
+
+        $user = $this->getUser();
+        $form = $this->createForm(UserPasswordType::class, $user, [
+            'current_password' => false,
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $errors = $this->getUserManager()->setPassword($user);
+
+            if (count($errors) === 0) {
+                return $this->redirectOnSuccess();
+            }
+        }
+
+        return $this->render(
+            'Tom32iSimpleSecurityBundle:Security:reset_password.html.twig',
+            ['form' => $form->createView()]
         );
     }
 

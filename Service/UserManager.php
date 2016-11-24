@@ -4,11 +4,12 @@ namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Elao\Bundle\VoucherAuthenticationBundle\Behavior\VoucherProviderInterface;
-use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ValidateRegistrationVoucher;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
+use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ResetPasswordVoucher;
+use Tom32i\Bundle\SimpleSecurityBundle\Voucher\ValidateRegistrationVoucher;
 
 /**
  * User manager
@@ -117,13 +118,13 @@ class UserManager
 
         $this->voucherProvider->persist($voucher);
 
-        $validateUrl = $this->router->generate(
+        $url = $this->router->generate(
             'voucher',
             ['token' => $voucher->getToken()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $this->mailer->sendRegistrationMessage($user, $validateUrl);
+        $this->mailer->sendRegistrationMessage($user, $url);
 
         return $errors;
     }
@@ -160,19 +161,17 @@ class UserManager
      */
     public function resetPassword(UserInterface $user)
     {
-        $errors = $this->validator->validate($user, null, ['ResetPassword']);
+        $voucher = new ResetPasswordVoucher($user->getUsername());
 
-        if (count($errors) === 0) {
-            $this->objectManager->persist($user);
-            $this->objectManager->flush($user);
+        $this->voucherProvider->persist($voucher);
 
-            $voucher = new Voucher($user->getUsername(), 'password');
-            $this->voucherManager->presist($voucher);
+        $url = $this->router->generate(
+            'voucher',
+            ['token' => $voucher->getToken()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
-            $this->mailer->sendResetPasswordMessage($user, $voucher->getToken());
-        }
-
-        return $errors;
+        $this->mailer->sendResetPasswordMessage($user, $url);
     }
 
     /**
@@ -182,13 +181,15 @@ class UserManager
      *
      * @return ConstraintViolationListInterface
      */
-    public function setPassword(UserInterface $user, $password)
+    public function setPassword(UserInterface $user)
     {
-        $user->setPlainPassword($password);
-
         $errors = $this->validator->validate($user, null, ['ChangePassword']);
 
         if (count($errors) === 0) {
+            $password = $this->passwordEncoder->encodePassword($user, $user->getPlainPassword());
+
+            $user->setPassword($password);
+
             $this->objectManager->persist($user);
             $this->objectManager->flush($user);
         }

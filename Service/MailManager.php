@@ -106,28 +106,6 @@ class MailManager
             [
                 'name' => $user->getUsername(),
                 'url' => $url,
-                //'root' => $this->root,
-            ]
-        );
-
-        $this->mailer->send($message);
-    }
-
-    /**
-     * Send an email to the user to confirm its email address
-     *
-     * @param UserInterface $user The user to send the email to
-     * @param string $token The token
-     */
-    public function sendConfirmationEmailMessage(UserInterface $user, $token)
-    {
-        $message = $this->createMessage(
-            'confirmation.title',
-            [ $user->getEmail() => $user->getUsername() ],
-            '@Tom32iSimpleSecurity/Message/validation.html.twig',
-            [
-                'name' => $user->getUsername(),
-                'token' => $token,
             ]
         );
 
@@ -138,9 +116,9 @@ class MailManager
      * Send an email to the user to choose a new password
      *
      * @param UserInterface $user The user to send the email to
-     * @param string $token The token
+     * @param string $url The reset password url
      */
-    public function sendResetPasswordMessage(UserInterface $user, $token)
+    public function sendResetPasswordMessage(UserInterface $user, $url)
     {
         $message = $this->createMessage(
             'reset_password.title',
@@ -148,8 +126,7 @@ class MailManager
             '@Tom32iSimpleSecurity/Message/reset_password.html.twig',
             [
                 'name' => $user->getUsername(),
-                'token' => $token,
-                'root' => $this->root,
+                'url' => $url,
             ]
         );
 

@@ -61,6 +61,6 @@ register:
 forgot_password_confirmation:
     title:      Votre mot de passe a été réinitialisé
     content:    |
-                <p>Un email vous a été envoyé, il vous permettra de choisir un nouveau mot de passe.</p>
+                <p>Un email a été envoyé à "%email%", il vous permettra de choisir un nouveau mot de passe.</p>
     link:
         login:  Connexion
