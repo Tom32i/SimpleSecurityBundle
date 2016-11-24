@@ -1,10 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Swift_Mailer;
 use Swift_Message;
-use Swift_SwiftException;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
@@ -52,10 +60,10 @@ class MailManager
     /**
      * Constructor
      *
-     * @param Swift_Mailer $mailer
+     * @param Swift_Mailer        $mailer
      * @param TranslatorInterface $translator
-     * @param EngineInterface $templating
-     * @param string $from
+     * @param EngineInterface     $templating
+     * @param string              $from
      */
     public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, $from = '')
     {
@@ -69,12 +77,12 @@ class MailManager
     /**
      * Create a new message
      *
-     * @param string $title
-     * @param strin|array $to
-     * @param string $template
-     * @param array $parameters
+     * @param string       $title
+     * @param strin|array  $to
+     * @param string       $template
+     * @param array        $parameters
      * @param string|array $from
-     * @param string $type
+     * @param string       $type
      *
      * @return Swift_Message
      */
@@ -95,13 +103,13 @@ class MailManager
      * Send an email to the user to confirm its email address after registration
      *
      * @param UserInterface $user The user to send the email to
-     * @param string $url The validation url
+     * @param string        $url  The validation url
      */
     public function sendRegistrationMessage(UserInterface $user, $url)
     {
         $message = $this->createMessage(
             'registration.title',
-            [ $user->getEmail() => $user->getUsername() ],
+            [$user->getEmail() => $user->getUsername()],
             '@Tom32iSimpleSecurity/Message/registration.html.twig',
             [
                 'name' => $user->getUsername(),
@@ -116,13 +124,13 @@ class MailManager
      * Send an email to the user to choose a new password
      *
      * @param UserInterface $user The user to send the email to
-     * @param string $url The reset password url
+     * @param string        $url  The reset password url
      */
     public function sendResetPasswordMessage(UserInterface $user, $url)
     {
         $message = $this->createMessage(
             'reset_password.title',
-            [ $user->getEmail() => $user->getUsername() ],
+            [$user->getEmail() => $user->getUsername()],
             '@Tom32iSimpleSecurity/Message/reset_password.html.twig',
             [
                 'name' => $user->getUsername(),

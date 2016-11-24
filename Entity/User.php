@@ -1,10 +1,18 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
@@ -19,7 +27,7 @@ use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 abstract class User implements UserInterface
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
@@ -58,7 +66,7 @@ abstract class User implements UserInterface
     protected $roles;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean")
      * @Assert\IsFalse(groups={"Confirmation"})
@@ -114,7 +122,7 @@ abstract class User implements UserInterface
     /**
      * Get id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -280,7 +288,7 @@ abstract class User implements UserInterface
     /**
      * Set enabled
      *
-     * @param boolean $enabled
+     * @param bool $enabled
      *
      * @return StatedEntity
      */
@@ -294,7 +302,7 @@ abstract class User implements UserInterface
     /**
      * Get enabled
      *
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
@@ -306,7 +314,7 @@ abstract class User implements UserInterface
      *
      * @param string $role The role to test
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRole($role)
     {
@@ -318,7 +326,7 @@ abstract class User implements UserInterface
      *
      * @return array
      */
-    static public function getAvailableRoles()
+    public static function getAvailableRoles()
     {
         return [];
     }
@@ -333,7 +341,7 @@ abstract class User implements UserInterface
         foreach ($this->roles as $i => $role) {
             if (!in_array($role, $roles)) {
                 $context
-                    ->buildViolation(sprintf('Uknown role "%s", available roles are: %s.', $role, join(', ', $roles)))
+                    ->buildViolation(sprintf('Uknown role "%s", available roles are: %s.', $role, implode(', ', $roles)))
                     ->atPath(sprintf('roles[%s]', $i))
                     ->addViolation();
             }

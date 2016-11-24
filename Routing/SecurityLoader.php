@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Routing;
 
 use Symfony\Component\Config\Loader\Loader;
@@ -39,7 +48,7 @@ class SecurityLoader extends Loader
      */
     public function load($resource, $type = null)
     {
-        $routes = new RouteCollection;
+        $routes = new RouteCollection();
 
         foreach ($this->ressources as $resource) {
             $routes->addCollection($this->import($resource));

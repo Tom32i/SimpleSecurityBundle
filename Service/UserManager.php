@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -54,13 +63,13 @@ class UserManager
     /**
      * Constructor
      *
-     * @param ObjectManager $objectManager
-     * @param ValidatorInterface $validator
-     * @param UrlGeneratorInterface $router
+     * @param ObjectManager                $objectManager
+     * @param ValidatorInterface           $validator
+     * @param UrlGeneratorInterface        $router
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param VoucherProviderInterface $voucherProvider
-     * @param MailManager $mailer
-     * @param string $userClassname
+     * @param VoucherProviderInterface     $voucherProvider
+     * @param MailManager                  $mailer
+     * @param string                       $userClassname
      */
     public function __construct(
         ObjectManager $objectManager,
@@ -70,7 +79,8 @@ class UserManager
         VoucherProviderInterface $voucherProvider,
         MailManager $mailer
         //$userClassname
-    ) {
+)
+    {
         $this->objectManager = $objectManager;
         $this->validator = $validator;
         $this->router = $router;
