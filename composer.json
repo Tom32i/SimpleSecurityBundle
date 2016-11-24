@@ -1,18 +1,21 @@
 {
     "name": "tom32i/simple-security-bundle",
-    "type": "symfony-bundle",
     "description": "A simple security bundle for user authentication",
+    "type": "symfony-bundle",
     "keywords": ["user", "security", "authentication"],
     "homepage": "https://github.com/Tom32i/SimpleSecurityBundle",
     "license": "MIT",
     "authors": [
         {
             "name": "Thomas Jarrand",
+            "email": "thomas.jarrand@gmail.com",
             "homepage": "https://github.com/Tom32i"
         }
     ],
     "require": {
-        "symfony/framework-bundle": "~2.5"
+        "php": ">=5.5.9",
+        "symfony/framework-bundle": "~2.7|~3.0",
+        "elao/voucher-authentication-bundle": "dev-master"
     },
     "autoload": {
         "psr-4": {
@@ -21,7 +24,11 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.4.x-dev"
+            "dev-symfony3": "1.0.x-dev"
         }
+    },
+    "scripts": {
+        "lint": "php-cs-fixer fix --config-file=.php_cs --dry-run --diff",
+        "lint-fix": "php-cs-fixer fix --config-file=.php_cs"
     }
 }

@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -13,7 +22,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
@@ -26,16 +35,6 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->defaultValue('Tom32i\Bundle\SimpleSecurityBundle\Entity\User')
                     ->info('<info>User class (must extend Tom32i\Bundle\SimpleSecurityBundle\Entity\User)</info>')
-                ->end()
-                ->arrayNode('login')
-                    ->addDefaultsIfNotSet()
-                    ->canBeDisabled()
-                    ->children()
-                        ->scalarNode('firewall')
-                            ->isRequired()
-                            ->info('<info>Firewall to log the user into</info>')
-                        ->end()
-                    ->end()
                 ->end()
                 ->arrayNode('register')
                     ->canBeDisabled()
@@ -54,7 +53,9 @@ class Configuration implements ConfigurationInterface
                     ->info('<info>Route to redirect to on successful login</info>')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function($name) { return ['name' => $name]; })
+                        ->then(function ($name) {
+                            return ['name' => $name];
+                        })
                     ->end()
                     ->children()
                         ->scalarNode('name')

@@ -1,10 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 /**
@@ -13,67 +23,41 @@ use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 class UserPasswordType extends AbstractType
 {
     /**
-     * User class name
-     *
-     * @var string
-     */
-    protected $userClassname;
-
-    /**
-     * Constructor
-     *
-     * @param string $userClassname
-     */
-    public function __construct($userClassname)
-    {
-        $this->userClassname = $userClassname;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder
+            ->add('plainPassword', Type\RepeatedType::class, [
+                'type' => Type\PasswordType::class,
+            ]);
+
         if ($options['current_password']) {
-            $builder->add(
-                'password',
-                'password',
-                ['constraints' => [new UserPassword]]
-            );
+            $builder->add('password', Type\PasswordType::class, [
+                'constraints' => [new UserPassword()],
+                'mapped' => false,
+            ]);
         }
 
-        $builder
-            ->add(
-                'plainPassword',
-                'repeated',
-                [
-                    'type'            => 'password',
-                    'invalid_message' => 'user.password.mismatch',
-                ]
-            );
+        $builder->add('submit', Type\SubmitType::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_class'         => $this->userClassname,
-                'validation_groups'  => ['ChangePassword'],
-                'method'             => 'POST',
-                'cascade_validation' => true,
-                'submit'             => true,
-                'current_password'   => true,
-            ]
-        );
+        $resolver->setDefaults([
+            'method' => 'POST',
+            'validation_groups' => ['ChangePassword'],
+            'current_password' => true,
+        ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'user_password';
     }

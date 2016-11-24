@@ -1,10 +1,21 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Register type
@@ -12,61 +23,33 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class RegisterType extends AbstractType
 {
     /**
-     * User class name
-     *
-     * @var string
-     */
-    protected $userClassname;
-
-    /**
-     * Constructor
-     *
-     * @param string $userClassname
-     */
-    public function __construct($userClassname)
-    {
-        $this->userClassname = $userClassname;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', 'text')
-            ->add('email', 'email')
-            ->add(
-                'plainPassword',
-                'repeated',
-                [
-                    'type'            => 'password',
-                    'invalid_message' => 'user.password.mismatch',
-                ]
-            );
+            ->add('username', Type\TextType::class)
+            ->add('email', Type\EmailType::class)
+            ->add('plainPassword', Type\RepeatedType::class, [
+                'type' => Type\PasswordType::class,
+            ])
+            ->add('submit', Type\SubmitType::class)
+        ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_class'         => $this->userClassname,
-                'validation_groups'  => ['Default', 'Registration'],
-                'cascade_validation' => true,
-                'method'             => 'POST',
-                'submit'             => true,
-            ]
-        );
-    }
+        $resolver->setRequired('data_class');
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'register';
+        $resolver->setDefaults([
+            'method' => 'POST',
+            'validation_groups' => ['Default', 'Registration'],
+            'empty_data' => function (Options $options) {
+                return new $options['data_class']();
+            },
+        ]);
     }
 }

@@ -1,10 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Forgot Password type
@@ -16,27 +26,17 @@ class ForgotPasswordType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('email', 'text');
+        $builder
+            ->add('email', Type\TextType::class)
+            ->add('submit', Type\SubmitType::class)
+        ;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'method' => 'POST',
-                'submit' => true,
-            ]
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'forgot_password';
+        $resolver->setDefault('method', 'POST');
     }
 }

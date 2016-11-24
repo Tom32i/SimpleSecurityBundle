@@ -1,13 +1,20 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Service;
 
 use Swift_Mailer;
 use Swift_Message;
-use Swift_SwiftException;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
@@ -48,33 +55,38 @@ class MailManager
      *
      * @var string
      */
-    protected $root;
+    //protected $root;
 
-    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, RouterInterface $router, $from = "")
+    /**
+     * Constructor
+     *
+     * @param Swift_Mailer        $mailer
+     * @param TranslatorInterface $translator
+     * @param EngineInterface     $templating
+     * @param string              $from
+     */
+    public function __construct(Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, $from = '')
     {
-        $context = $router->getContext();
-        $root    = $context->getScheme() . '://' . $context->getHost();
-
-        $this->mailer     = $mailer;
+        $this->mailer = $mailer;
         $this->translator = $translator;
         $this->templating = $templating;
-        $this->from       = $from;
-        $this->root       = $root;
+        $this->from = $from;
+        //$this->root = $router->getContext()->getScheme() . '://' . $router->getContext()->getHost();
     }
 
     /**
      * Create a new message
      *
-     * @param string $title
-     * @param strin|array $to
-     * @param string $template
-     * @param array $parameters
+     * @param string       $title
+     * @param strin|array  $to
+     * @param string       $template
+     * @param array        $parameters
      * @param string|array $from
-     * @param string $type
+     * @param string       $type
      *
      * @return Swift_Message
      */
-    protected function createMessage($title, $to, $template, $parameters = [], $from = null, $type = 'text/html')
+    protected function createMessage($title, $to, $template, array $parameters = [], $from = null, $type = 'text/html')
     {
         if ($from === null) {
             $from = $this->from;
@@ -91,40 +103,17 @@ class MailManager
      * Send an email to the user to confirm its email address after registration
      *
      * @param UserInterface $user The user to send the email to
-     * @param string $token The token
+     * @param string        $url  The validation url
      */
-    public function sendRegistrationMessage(UserInterface $user, $token)
+    public function sendRegistrationMessage(UserInterface $user, $url)
     {
         $message = $this->createMessage(
             'registration.title',
             [$user->getEmail() => $user->getUsername()],
             '@Tom32iSimpleSecurity/Message/registration.html.twig',
             [
-                'name'  => $user->getUsername(),
-                'token' => $token,
-                'root'  => $this->root,
-            ]
-        );
-
-        $this->mailer->send($message);
-    }
-
-    /**
-     * Send an email to the user to confirm its email address
-     *
-     * @param UserInterface $user The user to send the email to
-     * @param string $token The token
-     */
-    public function sendConfirmationEmailMessage(UserInterface $user, $token)
-    {
-        $message = $this->createMessage(
-            'confirmation.title',
-            [$user->getEmail() => $user->getUsername()],
-            '@Tom32iSimpleSecurity/Message/validation.html.twig',
-            [
-                'name'  => $user->getUsername(),
-                'token' => $token,
-                'root'  => $this->root,
+                'name' => $user->getUsername(),
+                'url' => $url,
             ]
         );
 
@@ -135,18 +124,17 @@ class MailManager
      * Send an email to the user to choose a new password
      *
      * @param UserInterface $user The user to send the email to
-     * @param string $token The token
+     * @param string        $url  The reset password url
      */
-    public function sendResetPasswordMessage(UserInterface $user, $token)
+    public function sendResetPasswordMessage(UserInterface $user, $url)
     {
         $message = $this->createMessage(
             'reset_password.title',
             [$user->getEmail() => $user->getUsername()],
             '@Tom32iSimpleSecurity/Message/reset_password.html.twig',
             [
-                'name'  => $user->getUsername(),
-                'token' => $token,
-                'root'  => $this->root,
+                'name' => $user->getUsername(),
+                'url' => $url,
             ]
         );
 

@@ -24,16 +24,12 @@ $bundles = array(
 #### Add routing in `app/config/routing.yml`:
 
 ```
-login_check:
-    pattern:   /login-check
-
 logout:
     pattern:   /logout
 
-simple_security:
-    resource: "@Tom32iSimpleSecurityBundle/Controller/"
-    type:     annotation
-    prefix:   /
+login:
+    path:      /login
+    defaults:  { _controller: Tom32iSimpleSecurityBundle:Security:login }
 ```
 
 ### Create your custom user class:
@@ -68,11 +64,11 @@ class User extends SimpleSecurityUser
 
         $this->addRole(static::ROLE_USER);
     }
-    
+
     /**
      * Get available roles (used for validation)
      *
-     * @return array    
+     * @return array
      */
     static public function getAvailableRoles()
     {
@@ -88,7 +84,7 @@ Set up encorder and provider for your custom user class `Acme\DemoBundle\Entity\
 ```
 security:
     encoders:
-    	# Choose an encoder for your User class:    
+    	# Choose an encoder for your User class:
         Acme\DemoBundle\Entity\User: sha512
 
     providers:
@@ -117,7 +113,7 @@ security:
                 domain:   ~
                 # ... and the "Remember me" parameter as well:
                 remember_me_parameter: "login[remember_me]"
-                
+
     access_control:
     	# Allow anonymous users to access login, register and forgot password routes:
         - { path: ^/(login|register|forgot-password), roles: IS_AUTHENTICATED_ANONYMOUSLY }

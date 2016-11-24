@@ -1,29 +1,36 @@
 <?php
 
+/*
+ * This file is part of the Simple Security bundle.
+ *
+ * Copyright © Thomas Jarrand <thomas.jarrand@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tom32i\Bundle\SimpleSecurityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Tom32i\Bundle\SimpleSecurityBundle\Behaviour\UserInterface;
 
 /**
  * User
  *
- * @ORM\MappedSuperclass
+ * @ORM\MappedSuperclass()
  * @UniqueEntity(fields="email", message="user.email.used")
  * @UniqueEntity(fields="username", message="user.username.used")
  */
 abstract class User implements UserInterface
 {
     /**
-     * @var integer
+     * @var int
      *
-     * @ORM\Id
      * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -33,15 +40,13 @@ abstract class User implements UserInterface
      *
      * @ORM\Column(name="email", type="string", length=60, unique=true)
      * @Assert\Email(message="user.email.invalid")
-     * @Assert\NotBlank(message="user.email.invalid")
      */
     protected $email;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=50, unique=true)
-     * @Assert\Length(min=3, max=50, minMessage="user.username.invalid", maxMessage="user.username.invalid")
+     * @ORM\Column(name="username", type="string", length=255, unique=true)
      * @Assert\NotBlank(message="user.username.invalid")
      */
     protected $username;
@@ -49,66 +54,43 @@ abstract class User implements UserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     * @Assert\Null(groups={"ChangePassword", "Registration"})
+     * @ORM\Column(name="password", type="string", length=64, nullable=true)
      */
     protected $password;
 
     /**
-     * @var string
-     *
-     * @Assert\Length(
-     *     min=5,
-     *     max=50,
-     *     minMessage="user.password.invalid",
-     *     maxMessage="user.password.invalid",
-     *     groups={"Registration", "ChangePassword"}
-     * )
-     * @Assert\NotBlank(message="user.password.invalid", groups={"Registration", "ChangePassword"})
-     */
-    protected $plainPassword;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="salt", type="string", length=32)
-     */
-    protected $salt;
-
-    /**
      * @var array
      *
-     * @Assert\Count(min=1)
      * @ORM\Column(name="roles", type="simple_array")
      */
     protected $roles;
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="enabled", type="boolean")
-     * @Assert\False(groups={"Confirmation"})
+     * @Assert\IsFalse(groups={"Confirmation"})
      */
     protected $enabled;
 
     /**
-     * Vouchers
+     * Plain password
      *
-     * @var Collection
+     * @Assert\NotBlank(message="user.password.invalid", groups={"Registration", "ChangePassword"})
      *
-     * @ORM\OneToMany(targetEntity="Tom32i\Bundle\SimpleSecurityBundle\Entity\Voucher", mappedBy="user", orphanRemoval=true)
+     * @var string
      */
-    protected $vouchers;
+    protected $plainPassword;
 
     /**
      * Constructor
+     *
+     * @param array $roles Roles
      */
-    public function __construct()
+    public function __construct(array $roles = [])
     {
-        $this->enabled  = false;
-        $this->roles    = [];
-        $this->salt     = static::generateToken();
-        $this->vouchers = new ArrayCollection();
+        $this->roles = $roles;
+        $this->enabled = false;
     }
 
     /**
@@ -126,7 +108,7 @@ abstract class User implements UserInterface
      */
     public function serialize()
     {
-        return serialize([$this->id, $this->username, $this->email]);
+        return serialize([$this->id, $this->username, $this->email, $this->password, $this->enabled]);
     }
 
     /**
@@ -134,13 +116,13 @@ abstract class User implements UserInterface
      */
     public function unserialize($serialized)
     {
-        list($this->id, $this->username, $this->email) = unserialize($serialized);
+        list($this->id, $this->username, $this->email, $this->password, $this->enabled) = unserialize($serialized);
     }
 
     /**
      * Get id
      *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -181,6 +163,7 @@ abstract class User implements UserInterface
     public function setPassword($password)
     {
         $this->password = $password;
+        $this->plainPassword = null;
 
         return $this;
     }
@@ -196,7 +179,7 @@ abstract class User implements UserInterface
     }
 
     /**
-     * Set plainPassword
+     * Set plain password
      *
      * @param string $plainPassword
      *
@@ -204,16 +187,14 @@ abstract class User implements UserInterface
      */
     public function setPlainPassword($plainPassword)
     {
-        if ($plainPassword) {
-            $this->plainPassword = $plainPassword;
-            $this->password      = null;
-        }
+        $this->plainPassword = $plainPassword;
+        $this->password = null;
 
         return $this;
     }
 
     /**
-     * Get plainPassword
+     * Get plain plainPassword
      *
      * @return string
      */
@@ -223,37 +204,13 @@ abstract class User implements UserInterface
     }
 
     /**
-     * Set salt
-     *
-     * @param string $salt
-     *
-     * @return User
-     */
-    public function setSalt($salt)
-    {
-        $this->salt = $salt;
-
-        return $this;
-    }
-
-    /**
-     * Get salt
-     *
-     * @return string
-     */
-    public function getSalt()
-    {
-        return $this->salt;
-    }
-
-    /**
      * Set roles
      *
      * @param array $roles
      *
      * @return User
      */
-    public function setRoles($roles)
+    public function setRoles(array $roles)
     {
         $this->roles = $roles;
 
@@ -331,7 +288,7 @@ abstract class User implements UserInterface
     /**
      * Set enabled
      *
-     * @param boolean $enabled
+     * @param bool $enabled
      *
      * @return StatedEntity
      */
@@ -345,7 +302,7 @@ abstract class User implements UserInterface
     /**
      * Get enabled
      *
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
@@ -357,7 +314,7 @@ abstract class User implements UserInterface
      *
      * @param string $role The role to test
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRole($role)
     {
@@ -369,7 +326,7 @@ abstract class User implements UserInterface
      *
      * @return array
      */
-    static public function getAvailableRoles()
+    public static function getAvailableRoles()
     {
         return [];
     }
@@ -384,19 +341,11 @@ abstract class User implements UserInterface
         foreach ($this->roles as $i => $role) {
             if (!in_array($role, $roles)) {
                 $context
-                    ->buildViolation(sprintf('Uknown role "%s", available roles are: %s.', $role, join(', ', $roles)))
+                    ->buildViolation(sprintf('Uknown role "%s", available roles are: %s.', $role, implode(', ', $roles)))
                     ->atPath(sprintf('roles[%s]', $i))
                     ->addViolation();
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function equals(AdvancedUserInterface $user)
-    {
-        return ($user->getId() === $this->getId()) || ($user->getEmail() === $this->getEmail()) || ($user->getUsername() === $this->getUsername());
     }
 
     /**
@@ -407,6 +356,14 @@ abstract class User implements UserInterface
         $this->plainPassword = null;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSalt()
+    {
+        return null;
     }
 
     /**
@@ -431,15 +388,5 @@ abstract class User implements UserInterface
     public function isCredentialsNonExpired()
     {
         return true;
-    }
-
-    /**
-     * Generate token
-     *
-     * @return string
-     */
-    public static function generateToken()
-    {
-        return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
     }
 }
